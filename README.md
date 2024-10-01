@@ -1,10 +1,9 @@
 ![Cover Image](assets/cover.png)
 
-# ⚔️ Go-ArtifactsMMO SDK [WIP]
+# ⚔️ Artifacts SDK in Go [WIP]
 
-[![Build Status](https://github.com/0xN0x/go-artifactsmmo/actions/workflows/build.yml/badge.svg)](https://github.com/0xN0x/go-artifactsmmo/actions)
 [![Go Report Card](https://goreportcard.com/badge/github.com/0xN0x/go-artifactsmmo)](https://goreportcard.com/report/github.com/0xN0x/go-artifactsmmo)
-[![codecov](https://codecov.io/gh/0xN0x/go-artifactsmmo/branch/master/graph/badge.svg)](https://codecov.io/gh/0xN0x/go-artifactsmmo)
+[![codecov](https://codecov.io/gh/0xN0x/go-artifactsmmo/graph/badge.svg)](https://codecov.io/gh/0xN0x/go-artifactsmmo)
 
 `go-artifactsmmo` is a Go SDK for interacting with the [**ArtifactsMMO API**](https://artifactsmmo.com/), a unique MMORPG where the entire game is played by programming your own client or bot to control your character. Whether you're a coding newbie or a veteran at handling APIs, this project simplifies communication with the game.
 
