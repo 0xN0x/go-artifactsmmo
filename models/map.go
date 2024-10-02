@@ -13,12 +13,6 @@ type MapContent struct {
 	Code string `json:"code"`
 }
 
-type CharacterMovementData struct {
-	Cooldown    Cooldown    `json:"cooldown"`
-	Destination Destination `json:"destination"`
-	Character   Character   `json:"character"`
-}
-
 type Movement struct {
 	X int `json:"x"`
 	Y int `json:"y"`

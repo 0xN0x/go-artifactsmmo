@@ -26,3 +26,13 @@ type SingleItem struct {
 	Code     string `json:"code"`
 	Quantity int    `json:"quantity"`
 }
+
+type Drop struct {
+	Code     string `json:"code"`
+	Quantity int    `json"quantity"`
+}
+
+type Detail struct {
+	Xp    int    `json:"xp"`
+	Items []Drop `json:"items"`
+}

@@ -134,10 +134,3 @@ type RemoveItemInventory struct {
 	Slot     Slot `json:"slot"`
 	Quantity int  `json:"quantity"`
 }
-
-type EquipRequest struct {
-	Cooldown  Cooldown  `json:"cooldown"`
-	Slot      Slot      `json:"slot"`
-	Item      Item      `json:"item"`
-	Character Character `json:"character"`
-}
