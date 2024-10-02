@@ -66,3 +66,25 @@ func (c *ArtifactsMMO) GetCharacterInfo() (*models.Character, error) {
 
 	return &character.Data, nil
 }
+
+func (c *ArtifactsMMO) Move(x int, y int) (*models.CharacterMovementData, error) {
+	var move struct {
+		Data models.CharacterMovementData `json:"data"`
+	}
+
+	body := models.Movement{X: x, Y: y}
+	res, err := NewRequest(c, &move, "POST", fmt.Sprintf("%s/my/%s/action/move", apiUrl, c.username), body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode == 404 {
+		return nil, fmt.Errorf("map not found")
+	}
+
+	if res.StatusCode == 490 {
+		return nil, fmt.Errorf("already at destination")
+	}
+
+	return &move.Data, nil
+}
