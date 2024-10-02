@@ -140,3 +140,23 @@ func (c *ArtifactsMMO) Unequip(slot models.Slot, quantity int) (*models.EquipReq
 
 	return &unequip.Data, nil
 }
+
+func (c *ArtifactsMMO) Gather() (*models.SkillData, error) {
+	var skill struct {
+		Data models.SkillData `json:"data"`
+	}
+
+	res, err := NewRequest(c, &skill, "POST", fmt.Sprintf("%s/my/%s/action/gathering", apiUrl, c.username), nil).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 493:
+		return nil, fmt.Errorf("not skill level required")
+	case 598:
+		return nil, fmt.Errorf("resource not found on this map")
+	}
+
+	return &skill.Data, nil
+}
