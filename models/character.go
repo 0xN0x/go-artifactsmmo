@@ -104,3 +104,40 @@ type InventorySlots struct {
 	Code     string `json:"code"`
 	Quantity int    `json:"quantity"`
 }
+
+type Slot string
+
+const (
+	Weapon      Slot = "weapon"
+	Shield           = "shield"
+	Helmet           = "helmet"
+	BodyArmor        = "body_armor"
+	LegArmor         = "leg_armor"
+	Boots            = "boots"
+	Ring1            = "ring1"
+	Ring2            = "ring2"
+	Amulet           = "amulet"
+	Artifact1        = "artifact1"
+	Artifact2        = "artifact2"
+	Artifact3        = "artifact3"
+	Consumable1      = "consumable1"
+	Consumable2      = "consumable2"
+)
+
+type ItemInventory struct {
+	Code     string `json:"code"`
+	Slot     Slot   `json:"slot"`
+	Quantity int    `json:"quantity"`
+}
+
+type RemoveItemInventory struct {
+	Slot     Slot `json:"slot"`
+	Quantity int  `json:"quantity"`
+}
+
+type EquipRequest struct {
+	Cooldown  Cooldown  `json:"cooldown"`
+	Slot      Slot      `json:"slot"`
+	Item      Item      `json:"item"`
+	Character Character `json:"character"`
+}

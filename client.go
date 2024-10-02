@@ -88,3 +88,55 @@ func (c *ArtifactsMMO) Move(x int, y int) (*models.CharacterMovementData, error)
 
 	return &move.Data, nil
 }
+
+func (c *ArtifactsMMO) Equip(code string, slot models.Slot, quantity int) (*models.EquipRequest, error) {
+	var equip struct {
+		Data models.EquipRequest `json:"data"`
+	}
+
+	body := models.ItemInventory{Code: code, Slot: slot, Quantity: quantity}
+	res, err := NewRequest(c, &equip, "POST", fmt.Sprintf("%s/my/%s/action/equip", apiUrl, c.username), body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 404:
+		return nil, fmt.Errorf("item not found")
+	case 478:
+		return nil, fmt.Errorf("missing item or insufficient quantity")
+	case 484:
+		return nil, fmt.Errorf("can't equip more than 100 consumables")
+	case 485:
+		return nil, fmt.Errorf("item already equipped")
+	case 491:
+		return nil, fmt.Errorf("slot not empty")
+	case 496:
+		return nil, fmt.Errorf("level too low")
+	}
+
+	return &equip.Data, nil
+}
+
+func (c *ArtifactsMMO) Unequip(slot models.Slot, quantity int) (*models.EquipRequest, error) {
+	var unequip struct {
+		Data models.EquipRequest `json:"data"`
+	}
+
+	body := models.RemoveItemInventory{Slot: slot, Quantity: quantity}
+	res, err := NewRequest(c, &unequip, "POST", fmt.Sprintf("%s/my/%s/action/unequip", apiUrl, c.username), body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 404:
+		return nil, fmt.Errorf("item not found")
+	case 478:
+		return nil, fmt.Errorf("missing item or insufficient quantity")
+	case 497:
+		return nil, fmt.Errorf("inventory full")
+	}
+
+	return &unequip.Data, nil
+}
