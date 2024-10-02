@@ -47,12 +47,12 @@ func main() {
 ## 📅 Todo 
 - [x] API token authentication
 - [ ] Continuous Integration
-- [ ] Movements
-- [ ] Fights management
+- [x] Movements
+- [x] Fights management
 - [ ] Gathering ressources
 - [ ] Tasks (quests) support
 - [ ] Inventory
-  - [ ] Equipments
+  - [x] Equipments
   - [ ] Weight
 - [ ] Bank
 - [ ] Recycling
