@@ -15,29 +15,23 @@ const (
 )
 
 type ArtifactsMMO struct {
-	mu       sync.Mutex
-	Config   *client.ArtifactsConfig
-	Token    string
-	Username string
+	mu     sync.Mutex
+	Config *client.ArtifactsConfig
 }
 
 // NewClient creates a new client to access the ArtifactsMMO API
 func NewClient(token string, username string) *ArtifactsMMO {
 	return &ArtifactsMMO{
-		mu:       sync.Mutex{},
-		Config:   client.NewConfig(&http.Client{}, token, username),
-		Token:    token,
-		Username: username,
+		mu:     sync.Mutex{},
+		Config: client.NewConfig(&http.Client{}, token, username),
 	}
 }
 
 // NewClientWithCustomHttpClient creates a new client with a custom http.Client, mainly used for testing
 func NewClientWithCustomHttpClient(token string, username string, httpClient *http.Client) *ArtifactsMMO {
 	return &ArtifactsMMO{
-		mu:       sync.Mutex{},
-		Config:   client.NewConfig(httpClient, token, username),
-		Token:    token,
-		Username: username,
+		mu:     sync.Mutex{},
+		Config: client.NewConfig(httpClient, token, username),
 	}
 }
 
@@ -45,7 +39,7 @@ func NewClientWithCustomHttpClient(token string, username string, httpClient *ht
 func (c *ArtifactsMMO) Fight() (*models.CharacterFight, error) {
 	var fight models.CharacterFight
 
-	_, err := api.NewRequest(c.Config, &fight, "POST", fmt.Sprintf("%s/my/%s/action/fight", apiUrl, c.Username), nil).Run()
+	_, err := api.NewRequest(c.Config, &fight, "POST", fmt.Sprintf("%s/my/%s/action/fight", apiUrl, c.Config.GetUsername()), nil).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +51,7 @@ func (c *ArtifactsMMO) Fight() (*models.CharacterFight, error) {
 func (c *ArtifactsMMO) GetCharacterInfo() (*models.Character, error) {
 	var character models.Character
 
-	_, err := api.NewRequest(c.Config, &character, "GET", fmt.Sprintf("%s/characters/%s", apiUrl, c.Username), nil).Run()
+	_, err := api.NewRequest(c.Config, &character, "GET", fmt.Sprintf("%s/characters/%s", apiUrl, c.Config.GetUsername()), nil).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +64,7 @@ func (c *ArtifactsMMO) Move(x int, y int) (*models.CharacterMovementData, error)
 	var move models.CharacterMovementData
 
 	body := models.Movement{X: x, Y: y}
-	res, err := api.NewRequest(c.Config, &move, "POST", fmt.Sprintf("%s/my/%s/action/move", apiUrl, c.Username), body).Run()
+	res, err := api.NewRequest(c.Config, &move, "POST", fmt.Sprintf("%s/my/%s/action/move", apiUrl, c.Config.GetUsername()), body).Run()
 
 	if err != nil {
 		return nil, err
@@ -91,7 +85,7 @@ func (c *ArtifactsMMO) Equip(code string, slot models.Slot, quantity int) (*mode
 	var equip models.EquipRequest
 
 	body := models.ItemInventory{Code: code, Slot: slot, Quantity: quantity}
-	res, err := api.NewRequest(c.Config, &equip, "POST", fmt.Sprintf("%s/my/%s/action/equip", apiUrl, c.Username), body).Run()
+	res, err := api.NewRequest(c.Config, &equip, "POST", fmt.Sprintf("%s/my/%s/action/equip", apiUrl, c.Config.GetUsername()), body).Run()
 
 	if err != nil {
 		return nil, err
@@ -118,7 +112,7 @@ func (c *ArtifactsMMO) Unequip(slot models.Slot, quantity int) (*models.EquipReq
 	var unequip models.EquipRequest
 
 	body := models.RemoveItemInventory{Slot: slot, Quantity: quantity}
-	res, err := api.NewRequest(c.Config, &unequip, "POST", fmt.Sprintf("%s/my/%s/action/unequip", apiUrl, c.Username), body).Run()
+	res, err := api.NewRequest(c.Config, &unequip, "POST", fmt.Sprintf("%s/my/%s/action/unequip", apiUrl, c.Config.GetUsername()), body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +129,7 @@ func (c *ArtifactsMMO) Unequip(slot models.Slot, quantity int) (*models.EquipReq
 func (c *ArtifactsMMO) Gather() (*models.SkillData, error) {
 	var skill models.SkillData
 
-	res, err := api.NewRequest(c.Config, &skill, "POST", fmt.Sprintf("%s/my/%s/action/gathering", apiUrl, c.Username), nil).Run()
+	res, err := api.NewRequest(c.Config, &skill, "POST", fmt.Sprintf("%s/my/%s/action/gathering", apiUrl, c.Config.GetUsername()), nil).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -148,4 +142,90 @@ func (c *ArtifactsMMO) Gather() (*models.SkillData, error) {
 	}
 
 	return &skill, nil
+}
+
+// Accepting a new task.
+func (c *ArtifactsMMO) AcceptNewTask() (*models.TaskData, error) {
+	var task models.TaskData
+
+	res, err := api.NewRequest(c.Config, &task, "POST", fmt.Sprintf("%s/my/%s/action/task/new", apiUrl, c.Config.GetUsername()), nil).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 598:
+		return nil, models.ErrTaskmasterNotFound
+	}
+
+	return &task, nil
+}
+
+// Complete a task.
+func (c *ArtifactsMMO) CompleteTask() (*models.TaskRewardData, error) {
+	var taskReward models.TaskRewardData
+
+	res, err := api.NewRequest(c.Config, &taskReward, "POST", fmt.Sprintf("%s/my/%s/action/task/complete", apiUrl, c.Config.GetUsername()), nil).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 598:
+		return nil, models.ErrTaskmasterNotFound
+	}
+
+	return &taskReward, nil
+}
+
+// Exchange 6 tasks coins for a random reward. Rewards are exclusive items or resources.
+func (c *ArtifactsMMO) TaskExchange() (*models.TaskRewardData, error) {
+	var task models.TaskRewardData
+
+	res, err := api.NewRequest(c.Config, &task, "POST", fmt.Sprintf("%s/my/%s/action/task/exchange", apiUrl, c.Config.GetUsername()), nil).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 598:
+		return nil, models.ErrTaskmasterNotFound
+	}
+
+	return &task, nil
+}
+
+// Trading items with a Tasks Master.
+func (c *ArtifactsMMO) TaskTrade(code string, quantity int) (*models.TaskTradeData, error) {
+	var task models.TaskTradeData
+
+	body := models.SimpleItem{Code: code, Quantity: quantity}
+	res, err := api.NewRequest(c.Config, &task, "POST", fmt.Sprintf("%s/my/%s/action/task/trade", apiUrl, c.Config.GetUsername()), body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 598:
+		return nil, models.ErrTaskmasterNotFound
+	}
+
+	return &task, nil
+}
+
+// Cancel a task for 1 tasks coin.
+func (c *ArtifactsMMO) TaskCancel() (*models.TaskCancelled, error) {
+	var task models.TaskCancelled
+
+	res, err := api.NewRequest(c.Config, &task, "POST", fmt.Sprintf("%s/my/%s/action/task/cancel", apiUrl, c.Config.GetUsername()), nil).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 598:
+		return nil, models.ErrTaskmasterNotFound
+	}
+
+	return &task, nil
 }

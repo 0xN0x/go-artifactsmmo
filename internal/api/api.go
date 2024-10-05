@@ -75,10 +75,20 @@ func (hc *HTTPRequest) Run() (*http.Response, error) {
 	switch res.StatusCode {
 	case 452:
 		return nil, models.ErrBadToken
+	case 474:
+		return nil, models.ErrTaskNotOwned
+	case 475:
+		return nil, models.ErrTaskAlreadyCompleted
 	case 478:
 		return nil, models.ErrInsufficientQuantity
 	case 486:
 		return nil, models.ErrActionInProgress
+	case 487:
+		return nil, models.ErrCharacterHasNoTask
+	case 488:
+		return nil, models.ErrTaskNotCompleted
+	case 489:
+		return nil, models.ErrCharacterAlreadyHasTask
 	case 497:
 		return nil, models.ErrCharacterFullInventory
 	case 498:

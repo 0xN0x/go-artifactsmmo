@@ -49,11 +49,11 @@ func main() {
 - [ ] Continuous Integration
 - [x] Movements
 - [x] Fights management
-- [ ] Gathering ressources
-- [ ] Tasks (quests) support
-- [ ] Inventory
+- [X] Gathering ressources
+- [ ] Crafting
+- [X] Tasks (quests) support
+- [X] Inventory
   - [x] Equipments
-  - [ ] Weight
 - [ ] Bank
 - [ ] Recycling
 - [ ] Skills
