@@ -19,20 +19,24 @@ type Craft struct {
 	Skill    string       `json:"skill"`
 	Level    int          `json:"level"`
 	Quantity int          `json:"quantity"`
-	Items    []SingleItem `json:"items"`
+	Items    []SimpleItem `json:"items"`
 }
 
-type SingleItem struct {
+type SimpleItem struct {
 	Code     string `json:"code"`
 	Quantity int    `json:"quantity"`
 }
 
 type Drop struct {
 	Code     string `json:"code"`
-	Quantity int    `json"quantity"`
+	Quantity int    `json:"quantity"`
 }
 
 type Detail struct {
 	Xp    int    `json:"xp"`
 	Items []Drop `json:"items"`
+}
+
+type Gold struct {
+	Quantity int `json:"quantity"`
 }

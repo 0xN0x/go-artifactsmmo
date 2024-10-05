@@ -1,19 +1,30 @@
 package models
 
+type CharacterSkin string
+
+const (
+	CharacterSkinMen1   CharacterSkin = "men1"
+	CharacterSkinMen2   CharacterSkin = "men2"
+	CharacterSkinMen3   CharacterSkin = "men3"
+	CharacterSkinWomen1 CharacterSkin = "women1"
+	CharacterSkinWomen2 CharacterSkin = "women2"
+	CharacterSkinWomen3 CharacterSkin = "women3"
+)
+
 type Character struct {
 	// Main
-	Name               string `json:"name"`
-	Skin               string `json:"skin"`
-	Level              int    `json:"level"`
-	Xp                 int    `json:"xp"`
-	MaxXp              int    `json:"max_xp"`
-	AchievementsPoints int    `json:"achievements_points"`
-	Gold               int    `json:"gold"`
-	Speed              int    `json:"speed"`
-	Hp                 int    `json:"hp"`
-	Haste              int    `json:"haste"`
-	CriticalStrike     int    `json:"critical_strike"`
-	Stamina            int    `json:"stamina"`
+	Name               string        `json:"name"`
+	Skin               CharacterSkin `json:"skin"`
+	Level              int           `json:"level"`
+	Xp                 int           `json:"xp"`
+	MaxXp              int           `json:"max_xp"`
+	AchievementsPoints int           `json:"achievements_points"`
+	Gold               int           `json:"gold"`
+	Speed              int           `json:"speed"`
+	Hp                 int           `json:"hp"`
+	Haste              int           `json:"haste"`
+	CriticalStrike     int           `json:"critical_strike"`
+	Stamina            int           `json:"stamina"`
 
 	// Position
 	X int `json:"x"`
@@ -109,19 +120,19 @@ type Slot string
 
 const (
 	Weapon      Slot = "weapon"
-	Shield           = "shield"
-	Helmet           = "helmet"
-	BodyArmor        = "body_armor"
-	LegArmor         = "leg_armor"
-	Boots            = "boots"
-	Ring1            = "ring1"
-	Ring2            = "ring2"
-	Amulet           = "amulet"
-	Artifact1        = "artifact1"
-	Artifact2        = "artifact2"
-	Artifact3        = "artifact3"
-	Consumable1      = "consumable1"
-	Consumable2      = "consumable2"
+	Shield      Slot = "shield"
+	Helmet      Slot = "helmet"
+	BodyArmor   Slot = "body_armor"
+	LegArmor    Slot = "leg_armor"
+	Boots       Slot = "boots"
+	Ring1       Slot = "ring1"
+	Ring2       Slot = "ring2"
+	Amulet      Slot = "amulet"
+	Artifact1   Slot = "artifact1"
+	Artifact2   Slot = "artifact2"
+	Artifact3   Slot = "artifact3"
+	Consumable1 Slot = "consumable1"
+	Consumable2 Slot = "consumable2"
 )
 
 type ItemInventory struct {

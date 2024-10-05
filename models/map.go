@@ -5,7 +5,7 @@ type Destination struct {
 	Skin    string     `json:"skin"`
 	X       int        `json:"x"`
 	Y       int        `json:"y"`
-	Content MapContent `json:"content, omitempty"`
+	Content MapContent `json:"content,omitempty"`
 }
 
 type MapContent struct {

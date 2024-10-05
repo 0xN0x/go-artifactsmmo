@@ -8,7 +8,7 @@ type Fight struct {
 	Result string `json:"result"`
 
 	// Drops
-	Drops []SingleItem `json:"drops"`
+	Drops []SimpleItem `json:"drops"`
 
 	// Monster hits
 	MonsterBlockedHits struct {
