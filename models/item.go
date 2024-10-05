@@ -27,10 +27,7 @@ type SimpleItem struct {
 	Quantity int    `json:"quantity"`
 }
 
-type Drop struct {
-	Code     string `json:"code"`
-	Quantity int    `json:"quantity"`
-}
+type Drop SimpleItem
 
 type Detail struct {
 	Xp    int    `json:"xp"`
