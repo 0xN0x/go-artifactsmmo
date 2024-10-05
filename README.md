@@ -50,14 +50,14 @@ func main() {
 - [x] Movements
 - [x] Fights management
 - [X] Gathering ressources
-- [ ] Crafting
+- [X] Crafting
 - [X] Tasks (quests) support
 - [X] Inventory
   - [x] Equipments
-- [ ] Bank
-- [ ] Recycling
+- [X] Bank
+- [X] Recycling
 - [ ] Skills
-- [ ] Grand Exchange
+- [X] Grand Exchange
 - [ ] Events
 - [ ] Safe rate limiting
 - [ ] Examples

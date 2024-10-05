@@ -251,6 +251,29 @@ func (c *ArtifactsMMO) Craft(code string, quantity int) (*models.SkillData, erro
 	return &ret, nil
 }
 
+func (c *ArtifactsMMO) Recycling(code string, quantity int) (*models.Recycling, error) {
+	var ret models.Recycling
+
+	body := models.SimpleItem{Code: code, Quantity: quantity}
+	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/recycling", apiUrl, c.Config.GetUsername()), body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 404:
+		return nil, models.ErrItemNotFound
+	case 473:
+		return nil, models.ErrCantBeRecycled
+	case 493:
+		return nil, models.ErrInsufficientSkillLevel
+	case 598:
+		return nil, models.ErrWorkshopNotFound
+	}
+
+	return &ret, nil
+}
+
 func (c *ArtifactsMMO) DepositBank(code string, quantity int) (*models.BankItemTransaction, error) {
 	var ret models.BankItemTransaction
 
@@ -332,6 +355,84 @@ func (c *ArtifactsMMO) WithdrawBankGold(quantity int) (*models.BankGoldTransacti
 		return nil, models.ErrTransactionInProgress
 	case 598:
 		return nil, models.ErrBankNotFound
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) BuyBankExpansion() (*models.BankTransaction, error) {
+	var ret models.BankTransaction
+
+	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/bank/buy_expansion", apiUrl, c.Config.GetUsername()), nil).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 492:
+		return nil, models.ErrInsufficientGold
+	case 598:
+		return nil, models.ErrBankNotFound
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) BuyGE(code string, quantity int, price int) (*models.GETransaction, error) {
+	var ret models.GETransaction
+
+	body := models.GEItem{Code: code, Quantity: quantity, Price: price}
+
+	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/ge/buy", apiUrl, c.Config.GetUsername()), body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 479:
+		return nil, models.ErrTooManyItems
+	case 480:
+		return nil, models.ErrNoStock
+	case 482:
+		return nil, models.ErrNoItem
+	case 483:
+		return nil, models.ErrTransactionInProgress
+	case 486:
+		return nil, models.ErrTransactionCharacter
+	case 492:
+		return nil, models.ErrInsufficientGold
+	case 598:
+		return nil, models.ErrGENotFound
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) SellGE(code string, quantity int, price int) (*models.GETransaction, error) {
+	var ret models.GETransaction
+
+	body := models.GEItem{Code: code, Quantity: quantity, Price: price}
+
+	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/ge/sell", apiUrl, c.Config.GetUsername()), body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 479:
+		return nil, models.ErrTooManyItems
+	case 480:
+		return nil, models.ErrNoStock
+	case 482:
+		return nil, models.ErrNoItem
+	case 483:
+		return nil, models.ErrTransactionInProgress
+	case 486:
+		return nil, models.ErrTransactionCharacter
+	case 492:
+		return nil, models.ErrInsufficientGold
+	case 598:
+		return nil, models.ErrGENotFound
 	}
 
 	return &ret, nil

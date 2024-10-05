@@ -37,3 +37,7 @@ type Detail struct {
 type Gold struct {
 	Quantity int `json:"quantity"`
 }
+
+type ItemsArray struct {
+	Items []SimpleItem `json:"items"`
+}

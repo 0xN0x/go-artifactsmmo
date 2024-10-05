@@ -18,3 +18,23 @@ type SkillData struct {
 	Details   Detail    `json:"details"`
 	Character Character `json:"character"`
 }
+
+type Recycling struct {
+	Cooldown  Cooldown   `json:"cooldown"`
+	Details   ItemsArray `json:"details"`
+	Character Character  `json:"character"`
+}
+
+type BankTransaction struct {
+	Cooldown    Cooldown `json:"cooldown"`
+	Transaction struct {
+		Price int `json:"price"`
+	} `json:"transaction"`
+	Character Character `json:"character"`
+}
+
+type GETransactionResponse struct {
+	Cooldown    Cooldown      `json:"cooldown"`
+	Transaction GETransaction `json:"transaction"`
+	Character   Character     `json:"character"`
+}

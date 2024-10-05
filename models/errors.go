@@ -17,6 +17,7 @@ const (
 	ErrTaskmasterNotFound ArtifactError = "tasks master not found on this map"
 	ErrBankNotFound       ArtifactError = "bank not found"
 	ErrWorkshopNotFound   ArtifactError = "workshop not found on this map"
+	ErrGENotFound         ArtifactError = "grand exchange not found on this map"
 
 	ErrInsufficientQuantity   ArtifactError = "missing item or insufficient quantity"
 	ErrTooMuchConsumables     ArtifactError = "can't equip more than 100 consumables"
@@ -28,6 +29,7 @@ const (
 	ErrActionInProgress       ArtifactError = "an action is already in progress by your character"
 	ErrAlreadyAtDestination   ArtifactError = "already at destination"
 	ErrInsufficientSkillLevel ArtifactError = "not skill level required"
+	ErrCantBeRecycled         ArtifactError = "item can't be recycled"
 
 	ErrCharacterAlreadyHasTask ArtifactError = "character already has a task"
 	ErrCharacterHasNoTask      ArtifactError = "character has no task"
@@ -38,4 +40,10 @@ const (
 	ErrTransactionInProgress ArtifactError = "transaction already in progress with item or gold in the bank"
 	ErrBankFull              ArtifactError = "bank is full"
 	ErrInsufficientGold      ArtifactError = "insufficient gold"
+
+	ErrTooManyItems         ArtifactError = "can't buy or sell that many items at the same time"
+	ErrNoStock              ArtifactError = "no stock for this item"
+	ErrNoItem               ArtifactError = "no item at this price"
+	ErrTransactionOther     ArtifactError = "transaction is already in progress on this item by a another character"
+	ErrTransactionCharacter ArtifactError = "transaction is already in progress by your character"
 )
