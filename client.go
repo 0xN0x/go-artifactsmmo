@@ -229,3 +229,110 @@ func (c *ArtifactsMMO) TaskCancel() (*models.TaskCancelled, error) {
 
 	return &task, nil
 }
+
+func (c *ArtifactsMMO) Craft(code string, quantity int) (*models.SkillData, error) {
+	var ret models.SkillData
+
+	body := models.SimpleItem{Code: code, Quantity: quantity}
+	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/crafting", apiUrl, c.Username), body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 404:
+		return nil, models.ErrCraftNotFound
+	case 493:
+		return nil, models.ErrInsufficientSkillLevel
+	case 598:
+		return nil, models.ErrWorkshopNotFound
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) DepositBank(code string, quantity int) (*models.BankItemTransaction, error) {
+	var ret models.BankItemTransaction
+
+	body := models.SimpleItem{Code: code, Quantity: quantity}
+	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/bank/deposit", apiUrl, c.Username), body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 404:
+		return nil, models.ErrItemNotFound
+	case 461:
+		return nil, models.ErrTransactionInProgress
+	case 462:
+		return nil, models.ErrBankFull
+	case 598:
+		return nil, models.ErrBankNotFound
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) DepositBankGold(quantity int) (*models.BankGoldTransaction, error) {
+	var ret models.BankGoldTransaction
+
+	body := models.Gold{Quantity: quantity}
+	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/bank/deposit/gold", apiUrl, c.Username), body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 461:
+		return nil, models.ErrTransactionInProgress
+	case 492:
+		return nil, models.ErrInsufficientGold
+	case 598:
+		return nil, models.ErrBankNotFound
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) WithdrawBank(code string, quantity int) (*models.BankItemTransaction, error) {
+	var ret models.BankItemTransaction
+
+	body := models.SimpleItem{Code: code, Quantity: quantity}
+	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/bank/withdraw", apiUrl, c.Username), body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 404:
+		return nil, models.ErrItemNotFound
+	case 461:
+		return nil, models.ErrTransactionInProgress
+	case 598:
+		return nil, models.ErrBankNotFound
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) WithdrawBankGold(quantity int) (*models.BankGoldTransaction, error) {
+	var ret models.BankGoldTransaction
+
+	body := models.Gold{Quantity: quantity}
+	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/bank/withdraw/gold", apiUrl, c.Username), body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 460:
+		return nil, models.ErrInsufficientGold
+	case 461:
+		return nil, models.ErrTransactionInProgress
+	case 598:
+		return nil, models.ErrBankNotFound
+	}
+
+	return &ret, nil
+}
