@@ -41,7 +41,7 @@ func NewClientWithCustomHttpClient(token string, username string, httpClient *ht
 	}
 }
 
-// Fight starts a fight with a monster on the current map (if there is any)
+// Start a fight against a monster on the character's map.
 func (c *ArtifactsMMO) Fight() (*models.CharacterFight, error) {
 	var fight models.CharacterFight
 
@@ -53,7 +53,7 @@ func (c *ArtifactsMMO) Fight() (*models.CharacterFight, error) {
 	return &fight, nil
 }
 
-// GetCharacterInfo returns the full character information
+// Retrieve the details of a character.
 func (c *ArtifactsMMO) GetCharacterInfo() (*models.Character, error) {
 	var character models.Character
 
@@ -65,6 +65,7 @@ func (c *ArtifactsMMO) GetCharacterInfo() (*models.Character, error) {
 	return &character, nil
 }
 
+// Moves a character on the map using the map's X and Y position.
 func (c *ArtifactsMMO) Move(x int, y int) (*models.CharacterMovementData, error) {
 	var move models.CharacterMovementData
 
@@ -85,6 +86,7 @@ func (c *ArtifactsMMO) Move(x int, y int) (*models.CharacterMovementData, error)
 	return &move, nil
 }
 
+// Equip an item on your character.
 func (c *ArtifactsMMO) Equip(code string, slot models.Slot, quantity int) (*models.EquipRequest, error) {
 	var equip models.EquipRequest
 
@@ -111,6 +113,7 @@ func (c *ArtifactsMMO) Equip(code string, slot models.Slot, quantity int) (*mode
 	return &equip, nil
 }
 
+// Unequip an item on your character.
 func (c *ArtifactsMMO) Unequip(slot models.Slot, quantity int) (*models.EquipRequest, error) {
 	var unequip models.EquipRequest
 
@@ -128,6 +131,7 @@ func (c *ArtifactsMMO) Unequip(slot models.Slot, quantity int) (*models.EquipReq
 	return &unequip, nil
 }
 
+// Harvest a resource on the character's map.
 func (c *ArtifactsMMO) Gather() (*models.SkillData, error) {
 	var skill models.SkillData
 
