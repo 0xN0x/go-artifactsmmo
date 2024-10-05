@@ -234,7 +234,7 @@ func (c *ArtifactsMMO) Craft(code string, quantity int) (*models.SkillData, erro
 	var ret models.SkillData
 
 	body := models.SimpleItem{Code: code, Quantity: quantity}
-	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/crafting", apiUrl, c.Username), body).Run()
+	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/crafting", apiUrl, c.Config.GetUsername()), body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -255,7 +255,7 @@ func (c *ArtifactsMMO) DepositBank(code string, quantity int) (*models.BankItemT
 	var ret models.BankItemTransaction
 
 	body := models.SimpleItem{Code: code, Quantity: quantity}
-	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/bank/deposit", apiUrl, c.Username), body).Run()
+	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/bank/deposit", apiUrl, c.Config.GetUsername()), body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -278,7 +278,7 @@ func (c *ArtifactsMMO) DepositBankGold(quantity int) (*models.BankGoldTransactio
 	var ret models.BankGoldTransaction
 
 	body := models.Gold{Quantity: quantity}
-	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/bank/deposit/gold", apiUrl, c.Username), body).Run()
+	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/bank/deposit/gold", apiUrl, c.Config.GetUsername()), body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -299,7 +299,7 @@ func (c *ArtifactsMMO) WithdrawBank(code string, quantity int) (*models.BankItem
 	var ret models.BankItemTransaction
 
 	body := models.SimpleItem{Code: code, Quantity: quantity}
-	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/bank/withdraw", apiUrl, c.Username), body).Run()
+	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/bank/withdraw", apiUrl, c.Config.GetUsername()), body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -320,7 +320,7 @@ func (c *ArtifactsMMO) WithdrawBankGold(quantity int) (*models.BankGoldTransacti
 	var ret models.BankGoldTransaction
 
 	body := models.Gold{Quantity: quantity}
-	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/bank/withdraw/gold", apiUrl, c.Username), body).Run()
+	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/bank/withdraw/gold", apiUrl, c.Config.GetUsername()), body).Run()
 	if err != nil {
 		return nil, err
 	}
