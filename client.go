@@ -462,3 +462,115 @@ func (c *ArtifactsMMO) GetMyCharactersInfo() (*[]models.Character, error) {
 
 	return &ret, nil
 }
+
+// Retrieve the details of an achievement
+func (c *ArtifactsMMO) GetAchievement(code string) (*models.BaseAchievement, error) {
+	var ret models.BaseAchievement
+
+	res, err := api.NewRequest(c.Config, &ret, "GET", fmt.Sprintf("%s/achievements/%s", apiUrl, code), nil).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode == 404 {
+		return nil, models.ErrAchievementNotFound
+	}
+
+	return &ret, nil
+}
+
+// Retrieve the details of a map tile
+func (c *ArtifactsMMO) GetMap(x int, y int) (*models.MapSchema, error) {
+	var ret models.MapSchema
+
+	res, err := api.NewRequest(c.Config, &ret, "GET", fmt.Sprintf("%s/maps/%d/%d", apiUrl, x, y), nil).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode == 404 {
+		return nil, models.ErrMapNotFound
+	}
+
+	return &ret, nil
+}
+
+// Retrieve the details of an item
+func (c *ArtifactsMMO) GetItem(code string) (*models.SingleItem, error) {
+	var ret models.SingleItem
+
+	res, err := api.NewRequest(c.Config, &ret, "GET", fmt.Sprintf("%s/items/%s", apiUrl, code), nil).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode == 404 {
+		return nil, models.ErrItemNotFound
+	}
+
+	return &ret, nil
+}
+
+// Retrieve the details of a monster
+func (c *ArtifactsMMO) GetMonster(code string) (*models.Monster, error) {
+	var ret models.Monster
+
+	res, err := api.NewRequest(c.Config, &ret, "GET", fmt.Sprintf("%s/monsters/%s", apiUrl, code), nil).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode == 404 {
+		return nil, models.ErrMonsterNotFound
+	}
+
+	return &ret, nil
+}
+
+// Retrieve the details of a ge item
+func (c *ArtifactsMMO) GetGEItem(code string) (*models.GEItems, error) {
+	var ret models.GEItems
+
+	res, err := api.NewRequest(c.Config, &ret, "GET", fmt.Sprintf("%s/ge/%s", apiUrl, code), nil).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode == 404 {
+		return nil, models.ErrItemNotFound
+	}
+
+	return &ret, nil
+}
+
+// Retrieve the details of a task
+func (c *ArtifactsMMO) GetTask(code string) (*models.TaskFull, error) {
+	var ret models.TaskFull
+
+	res, err := api.NewRequest(c.Config, &ret, "GET", fmt.Sprintf("%s/tasks/list/%s", apiUrl, code), nil).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode == 404 {
+		return nil, models.ErrTaskNotFound
+	}
+
+	return &ret, nil
+}
+
+// Retrieve the details of a task reward
+func (c *ArtifactsMMO) GetTaskReward(code string) (*models.TaskRewardFull, error) {
+	var ret models.TaskRewardFull
+
+	res, err := api.NewRequest(c.Config, &ret, "GET", fmt.Sprintf("%s/tasks/rewards/%s", apiUrl, code), nil).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode == 404 {
+		return nil, models.ErrRewardNotFound
+	}
+
+	return &ret, nil
+}

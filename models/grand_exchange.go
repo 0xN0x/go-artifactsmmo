@@ -12,3 +12,11 @@ type GEItem struct {
 	Quantity int    `json:"quantity"`
 	Price    int    `json:"price"`
 }
+
+type GEItemSchema struct {
+	Code        string `json:"code"`
+	Stock       int    `json:"stock"`
+	SellPrice   int    `json:"sell_price"`
+	BuyPrice    int    `json:"buy_price"`
+	MaxQuantity int    `json:"max_quantity"`
+}
