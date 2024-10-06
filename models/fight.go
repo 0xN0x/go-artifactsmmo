@@ -30,9 +30,3 @@ type Fight struct {
 
 	Logs []string `json:"logs"`
 }
-
-type CharacterFight struct {
-	Cooldown  Cooldown  `json:"cooldown"`
-	Fight     Fight     `json:"fight"`
-	Character Character `json:"character"`
-}
