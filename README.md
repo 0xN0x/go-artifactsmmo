@@ -56,7 +56,6 @@ func main() {
   - [x] Equipments
 - [X] Bank
 - [X] Recycling
-- [ ] Skills
 - [X] Grand Exchange
 - [ ] Events
 - [ ] Safe rate limiting
