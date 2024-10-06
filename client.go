@@ -48,10 +48,10 @@ func (c *ArtifactsMMO) Fight() (*models.CharacterFight, error) {
 }
 
 // Retrieve the details of a character.
-func (c *ArtifactsMMO) GetCharacterInfo() (*models.Character, error) {
+func (c *ArtifactsMMO) GetCharacterInfo(name string) (*models.Character, error) {
 	var character models.Character
 
-	_, err := api.NewRequest(c.Config, &character, "GET", fmt.Sprintf("%s/characters/%s", apiUrl, c.Config.GetUsername()), nil).Run()
+	_, err := api.NewRequest(c.Config, &character, "GET", fmt.Sprintf("%s/characters/%s", apiUrl, name), nil).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -433,6 +433,31 @@ func (c *ArtifactsMMO) SellGE(code string, quantity int, price int) (*models.GET
 		return nil, models.ErrInsufficientGold
 	case 598:
 		return nil, models.ErrGENotFound
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) DeleteItem(code string, quantity int) (*models.ItemReponse, error) {
+	var ret models.ItemReponse
+
+	body := models.SimpleItem{Code: code, Quantity: quantity}
+
+	_, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/delete", apiUrl, c.Config.GetUsername()), body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
+// Retrieve the details of all the characters.
+func (c *ArtifactsMMO) GetMyCharactersInfo() (*[]models.Character, error) {
+	var ret []models.Character
+
+	_, err := api.NewRequest(c.Config, &ret, "GET", fmt.Sprintf("%s/my/characters", apiUrl), nil).Run()
+	if err != nil {
+		return nil, err
 	}
 
 	return &ret, nil
