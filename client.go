@@ -3,6 +3,7 @@ package artifactsmmo
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 	"sync"
 
 	"github.com/0xN0x/go-artifactsmmo/internal/api"
@@ -501,8 +502,8 @@ func (c *ArtifactsMMO) GetMaps(contentCode, contentType string, page, size int) 
 		SetResultStruct(&ret).
 		SetParam("content_code", contentCode).
 		SetParam("content_type", contentType).
-		SetParam("page", string(page)).
-		SetParam("size", string(size)).Run()
+		SetParam("page", strconv.Itoa(page)).
+		SetParam("size", strconv.Itoa(size)).Run()
 	if err != nil {
 		return nil, err
 	}
