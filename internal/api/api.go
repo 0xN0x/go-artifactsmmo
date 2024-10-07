@@ -6,19 +6,18 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	"github.com/0xN0x/go-artifactsmmo/internal/client"
 	"github.com/0xN0x/go-artifactsmmo/models"
 )
 
-func NewRequest(config *client.ArtifactsConfig, customStruct any, method string, url string, body any) *HTTPRequest {
-	req, _ := http.NewRequest(method, url, nil)
+func NewRequest(config *client.ArtifactsConfig) *HTTPRequest {
+	req, _ := http.NewRequest("", "", nil)
 
 	return &HTTPRequest{
-		Config:       config,
-		Body:         body,
-		req:          req,
-		customStruct: customStruct,
+		Config: config,
+		req:    req,
 	}
 }
 
@@ -41,23 +40,50 @@ func (hc *HTTPRequest) Set() *HTTPRequest {
 	return hc
 }
 
-func (hc *HTTPRequest) AddBody() *HTTPRequest {
-	if hc.Body != nil {
-		// Set body & marshal
-		marshalled, err := json.Marshal(hc.Body)
-		if err != nil {
-			panic(err)
-		}
+func (hc *HTTPRequest) SetResultStruct(customStruct any) *HTTPRequest {
+	hc.customStruct = customStruct
+	return hc
+}
 
-		hc.req.Body = io.NopCloser(bytes.NewBuffer(marshalled))
-		hc.req.ContentLength = int64(len(marshalled))
+func (hc *HTTPRequest) SetMethod(method string) *HTTPRequest {
+	hc.req.Method = method
+	return hc
+}
+
+func (hc *HTTPRequest) SetURL(uri string) *HTTPRequest {
+	u, err := url.Parse(fmt.Sprintf("%s%s", hc.Config.GetApiUrl(), uri))
+	if err != nil {
+		panic(err)
 	}
+
+	hc.req.URL = u
+	return hc
+}
+
+func (hc *HTTPRequest) SetBody(body any) *HTTPRequest {
+	hc.Body = body
+
+	marshalled, err := json.Marshal(hc.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	hc.req.Body = io.NopCloser(bytes.NewBuffer(marshalled))
+	hc.req.ContentLength = int64(len(marshalled))
+
+	return hc
+}
+
+func (hc *HTTPRequest) SetParam(key string, value string) *HTTPRequest {
+	q := hc.req.URL.Query()
+	q.Add(key, value)
+	hc.req.URL.RawQuery = q.Encode()
 
 	return hc
 }
 
 func (hc *HTTPRequest) Run() (*http.Response, error) {
-	hc.Set().AddBody()
+	hc.Set()
 
 	res, err := hc.Config.GetClient().Do(hc.req)
 

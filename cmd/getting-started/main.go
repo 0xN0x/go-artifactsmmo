@@ -18,7 +18,7 @@ func main() {
 	}
 
 	client := artifactsmmo.NewClient(os.Args[1], os.Args[2])
-	character, err := client.GetCharacterInfo()
+	character, err := client.GetCharacterInfo(os.Args[2])
 	if err != nil {
 		fmt.Println("Error:", err)
 		return

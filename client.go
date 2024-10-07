@@ -23,7 +23,7 @@ type ArtifactsMMO struct {
 func NewClient(token string, username string) *ArtifactsMMO {
 	return &ArtifactsMMO{
 		mu:     sync.Mutex{},
-		Config: client.NewConfig(&http.Client{}, token, username),
+		Config: client.NewConfig(&http.Client{}, apiUrl, token, username),
 	}
 }
 
@@ -31,7 +31,7 @@ func NewClient(token string, username string) *ArtifactsMMO {
 func NewClientWithCustomHttpClient(token string, username string, httpClient *http.Client) *ArtifactsMMO {
 	return &ArtifactsMMO{
 		mu:     sync.Mutex{},
-		Config: client.NewConfig(httpClient, token, username),
+		Config: client.NewConfig(httpClient, apiUrl, token, username),
 	}
 }
 
@@ -39,7 +39,7 @@ func NewClientWithCustomHttpClient(token string, username string, httpClient *ht
 func (c *ArtifactsMMO) Fight() (*models.CharacterFight, error) {
 	var fight models.CharacterFight
 
-	_, err := api.NewRequest(c.Config, &fight, "POST", fmt.Sprintf("%s/my/%s/action/fight", apiUrl, c.Config.GetUsername()), nil).Run()
+	_, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/fight", c.Config.GetUsername())).SetResultStruct(&fight).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (c *ArtifactsMMO) Fight() (*models.CharacterFight, error) {
 func (c *ArtifactsMMO) GetCharacterInfo(name string) (*models.Character, error) {
 	var character models.Character
 
-	_, err := api.NewRequest(c.Config, &character, "GET", fmt.Sprintf("%s/characters/%s", apiUrl, name), nil).Run()
+	_, err := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/characters/%s", name)).SetResultStruct(&character).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -64,8 +64,7 @@ func (c *ArtifactsMMO) Move(x int, y int) (*models.CharacterMovementData, error)
 	var move models.CharacterMovementData
 
 	body := models.Movement{X: x, Y: y}
-	res, err := api.NewRequest(c.Config, &move, "POST", fmt.Sprintf("%s/my/%s/action/move", apiUrl, c.Config.GetUsername()), body).Run()
-
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/move", c.Config.GetUsername())).SetResultStruct(&move).SetBody(body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -85,8 +84,7 @@ func (c *ArtifactsMMO) Equip(code string, slot models.Slot, quantity int) (*mode
 	var equip models.EquipRequest
 
 	body := models.ItemInventory{Code: code, Slot: slot, Quantity: quantity}
-	res, err := api.NewRequest(c.Config, &equip, "POST", fmt.Sprintf("%s/my/%s/action/equip", apiUrl, c.Config.GetUsername()), body).Run()
-
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/equip", c.Config.GetUsername())).SetResultStruct(&equip).SetBody(body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +110,7 @@ func (c *ArtifactsMMO) Unequip(slot models.Slot, quantity int) (*models.EquipReq
 	var unequip models.EquipRequest
 
 	body := models.RemoveItemInventory{Slot: slot, Quantity: quantity}
-	res, err := api.NewRequest(c.Config, &unequip, "POST", fmt.Sprintf("%s/my/%s/action/unequip", apiUrl, c.Config.GetUsername()), body).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/unequip", c.Config.GetUsername())).SetResultStruct(&unequip).SetBody(body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +127,7 @@ func (c *ArtifactsMMO) Unequip(slot models.Slot, quantity int) (*models.EquipReq
 func (c *ArtifactsMMO) Gather() (*models.SkillData, error) {
 	var skill models.SkillData
 
-	res, err := api.NewRequest(c.Config, &skill, "POST", fmt.Sprintf("%s/my/%s/action/gathering", apiUrl, c.Config.GetUsername()), nil).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/gathering", c.Config.GetUsername())).SetResultStruct(&skill).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -148,7 +146,7 @@ func (c *ArtifactsMMO) Gather() (*models.SkillData, error) {
 func (c *ArtifactsMMO) AcceptNewTask() (*models.TaskData, error) {
 	var task models.TaskData
 
-	res, err := api.NewRequest(c.Config, &task, "POST", fmt.Sprintf("%s/my/%s/action/task/new", apiUrl, c.Config.GetUsername()), nil).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/task/new", c.Config.GetUsername())).SetResultStruct(&task).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -165,7 +163,7 @@ func (c *ArtifactsMMO) AcceptNewTask() (*models.TaskData, error) {
 func (c *ArtifactsMMO) CompleteTask() (*models.TaskRewardData, error) {
 	var taskReward models.TaskRewardData
 
-	res, err := api.NewRequest(c.Config, &taskReward, "POST", fmt.Sprintf("%s/my/%s/action/task/complete", apiUrl, c.Config.GetUsername()), nil).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/task/complete", c.Config.GetUsername())).SetResultStruct(&taskReward).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -182,7 +180,7 @@ func (c *ArtifactsMMO) CompleteTask() (*models.TaskRewardData, error) {
 func (c *ArtifactsMMO) TaskExchange() (*models.TaskRewardData, error) {
 	var task models.TaskRewardData
 
-	res, err := api.NewRequest(c.Config, &task, "POST", fmt.Sprintf("%s/my/%s/action/task/exchange", apiUrl, c.Config.GetUsername()), nil).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/task/exchange", c.Config.GetUsername())).SetResultStruct(&task).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -200,7 +198,7 @@ func (c *ArtifactsMMO) TaskTrade(code string, quantity int) (*models.TaskTradeDa
 	var task models.TaskTradeData
 
 	body := models.SimpleItem{Code: code, Quantity: quantity}
-	res, err := api.NewRequest(c.Config, &task, "POST", fmt.Sprintf("%s/my/%s/action/task/trade", apiUrl, c.Config.GetUsername()), body).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/task/trade", c.Config.GetUsername())).SetResultStruct(&task).SetBody(body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -217,7 +215,7 @@ func (c *ArtifactsMMO) TaskTrade(code string, quantity int) (*models.TaskTradeDa
 func (c *ArtifactsMMO) TaskCancel() (*models.TaskCancelled, error) {
 	var task models.TaskCancelled
 
-	res, err := api.NewRequest(c.Config, &task, "POST", fmt.Sprintf("%s/my/%s/action/task/cancel", apiUrl, c.Config.GetUsername()), nil).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/task/cancel", c.Config.GetUsername())).SetResultStruct(&task).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -234,7 +232,7 @@ func (c *ArtifactsMMO) Craft(code string, quantity int) (*models.SkillData, erro
 	var ret models.SkillData
 
 	body := models.SimpleItem{Code: code, Quantity: quantity}
-	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/crafting", apiUrl, c.Config.GetUsername()), body).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/crafting", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -255,7 +253,7 @@ func (c *ArtifactsMMO) Recycling(code string, quantity int) (*models.Recycling, 
 	var ret models.Recycling
 
 	body := models.SimpleItem{Code: code, Quantity: quantity}
-	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/recycling", apiUrl, c.Config.GetUsername()), body).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/recycling", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -278,7 +276,8 @@ func (c *ArtifactsMMO) DepositBank(code string, quantity int) (*models.BankItemT
 	var ret models.BankItemTransaction
 
 	body := models.SimpleItem{Code: code, Quantity: quantity}
-	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/bank/deposit", apiUrl, c.Config.GetUsername()), body).Run()
+
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/bank/deposit", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -301,7 +300,7 @@ func (c *ArtifactsMMO) DepositBankGold(quantity int) (*models.BankGoldTransactio
 	var ret models.BankGoldTransaction
 
 	body := models.Gold{Quantity: quantity}
-	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/bank/deposit/gold", apiUrl, c.Config.GetUsername()), body).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/bank/deposit/gold", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -322,7 +321,7 @@ func (c *ArtifactsMMO) WithdrawBank(code string, quantity int) (*models.BankItem
 	var ret models.BankItemTransaction
 
 	body := models.SimpleItem{Code: code, Quantity: quantity}
-	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/bank/withdraw", apiUrl, c.Config.GetUsername()), body).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/bank/withdraw", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -343,7 +342,7 @@ func (c *ArtifactsMMO) WithdrawBankGold(quantity int) (*models.BankGoldTransacti
 	var ret models.BankGoldTransaction
 
 	body := models.Gold{Quantity: quantity}
-	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/bank/withdraw/gold", apiUrl, c.Config.GetUsername()), body).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/bank/withdraw/gold", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -363,7 +362,7 @@ func (c *ArtifactsMMO) WithdrawBankGold(quantity int) (*models.BankGoldTransacti
 func (c *ArtifactsMMO) BuyBankExpansion() (*models.BankTransaction, error) {
 	var ret models.BankTransaction
 
-	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/bank/buy_expansion", apiUrl, c.Config.GetUsername()), nil).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/bank/buy_expansion", c.Config.GetUsername())).SetResultStruct(&ret).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -382,8 +381,7 @@ func (c *ArtifactsMMO) BuyGE(code string, quantity int, price int) (*models.GETr
 	var ret models.GETransaction
 
 	body := models.GEItem{Code: code, Quantity: quantity, Price: price}
-
-	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/ge/buy", apiUrl, c.Config.GetUsername()), body).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/ge/buy", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -412,8 +410,7 @@ func (c *ArtifactsMMO) SellGE(code string, quantity int, price int) (*models.GET
 	var ret models.GETransaction
 
 	body := models.GEItem{Code: code, Quantity: quantity, Price: price}
-
-	res, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/ge/sell", apiUrl, c.Config.GetUsername()), body).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/ge/sell", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -442,8 +439,7 @@ func (c *ArtifactsMMO) DeleteItem(code string, quantity int) (*models.ItemRepons
 	var ret models.ItemReponse
 
 	body := models.SimpleItem{Code: code, Quantity: quantity}
-
-	_, err := api.NewRequest(c.Config, &ret, "POST", fmt.Sprintf("%s/my/%s/action/delete", apiUrl, c.Config.GetUsername()), body).Run()
+	_, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/delete", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -455,7 +451,7 @@ func (c *ArtifactsMMO) DeleteItem(code string, quantity int) (*models.ItemRepons
 func (c *ArtifactsMMO) GetMyCharactersInfo() (*[]models.Character, error) {
 	var ret []models.Character
 
-	_, err := api.NewRequest(c.Config, &ret, "GET", fmt.Sprintf("%s/my/characters", apiUrl), nil).Run()
+	_, err := api.NewRequest(c.Config).SetMethod("GET").SetURL("/my/characters").SetResultStruct(&ret).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -467,7 +463,7 @@ func (c *ArtifactsMMO) GetMyCharactersInfo() (*[]models.Character, error) {
 func (c *ArtifactsMMO) GetAchievement(code string) (*models.BaseAchievement, error) {
 	var ret models.BaseAchievement
 
-	res, err := api.NewRequest(c.Config, &ret, "GET", fmt.Sprintf("%s/achievements/%s", apiUrl, code), nil).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/achievements/%s", code)).SetResultStruct(&ret).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -483,7 +479,7 @@ func (c *ArtifactsMMO) GetAchievement(code string) (*models.BaseAchievement, err
 func (c *ArtifactsMMO) GetMap(x int, y int) (*models.MapSchema, error) {
 	var ret models.MapSchema
 
-	res, err := api.NewRequest(c.Config, &ret, "GET", fmt.Sprintf("%s/maps/%d/%d", apiUrl, x, y), nil).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/maps/%d/%d", x, y)).SetResultStruct(&ret).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -495,11 +491,30 @@ func (c *ArtifactsMMO) GetMap(x int, y int) (*models.MapSchema, error) {
 	return &ret, nil
 }
 
+// Fetch maps details.
+func (c *ArtifactsMMO) GetMaps(contentCode, contentType string, page, size int) (any, error) {
+	var ret any
+
+	_, err := api.NewRequest(c.Config).
+		SetMethod("GET").
+		SetURL("/maps").
+		SetResultStruct(&ret).
+		SetParam("content_code", contentCode).
+		SetParam("content_type", contentType).
+		SetParam("page", string(page)).
+		SetParam("size", string(size)).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
 // Retrieve the details of an item
 func (c *ArtifactsMMO) GetItem(code string) (*models.SingleItem, error) {
 	var ret models.SingleItem
 
-	res, err := api.NewRequest(c.Config, &ret, "GET", fmt.Sprintf("%s/items/%s", apiUrl, code), nil).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/items/%s", code)).SetResultStruct(&ret).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -515,7 +530,7 @@ func (c *ArtifactsMMO) GetItem(code string) (*models.SingleItem, error) {
 func (c *ArtifactsMMO) GetMonster(code string) (*models.Monster, error) {
 	var ret models.Monster
 
-	res, err := api.NewRequest(c.Config, &ret, "GET", fmt.Sprintf("%s/monsters/%s", apiUrl, code), nil).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/monsters/%s", code)).SetResultStruct(&ret).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -531,7 +546,7 @@ func (c *ArtifactsMMO) GetMonster(code string) (*models.Monster, error) {
 func (c *ArtifactsMMO) GetGEItem(code string) (*models.GEItems, error) {
 	var ret models.GEItems
 
-	res, err := api.NewRequest(c.Config, &ret, "GET", fmt.Sprintf("%s/ge/%s", apiUrl, code), nil).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/ge/%s", code)).SetResultStruct(&ret).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -547,7 +562,7 @@ func (c *ArtifactsMMO) GetGEItem(code string) (*models.GEItems, error) {
 func (c *ArtifactsMMO) GetTask(code string) (*models.TaskFull, error) {
 	var ret models.TaskFull
 
-	res, err := api.NewRequest(c.Config, &ret, "GET", fmt.Sprintf("%s/tasks/list/%s", apiUrl, code), nil).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/tasks/list/%s", code)).SetResultStruct(&ret).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -563,7 +578,8 @@ func (c *ArtifactsMMO) GetTask(code string) (*models.TaskFull, error) {
 func (c *ArtifactsMMO) GetTaskReward(code string) (*models.TaskRewardFull, error) {
 	var ret models.TaskRewardFull
 
-	res, err := api.NewRequest(c.Config, &ret, "GET", fmt.Sprintf("%s/tasks/rewards/%s", apiUrl, code), nil).Run()
+	//res, err := api.NewRequest(c.Config, &ret, "GET", fmt.Sprintf("%s/tasks/rewards/%s", apiUrl, code), nil).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/tasks/rewards/%s", code)).SetResultStruct(&ret).Run()
 	if err != nil {
 		return nil, err
 	}

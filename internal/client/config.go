@@ -4,13 +4,15 @@ import "net/http"
 
 type ArtifactsConfig struct {
 	client   *http.Client
+	apiUrl   string
 	token    string
 	username string
 }
 
-func NewConfig(client *http.Client, token, username string) *ArtifactsConfig {
+func NewConfig(client *http.Client, apiUrl, token, username string) *ArtifactsConfig {
 	return &ArtifactsConfig{
 		client:   client,
+		apiUrl:   apiUrl,
 		token:    token,
 		username: username,
 	}
@@ -18,6 +20,10 @@ func NewConfig(client *http.Client, token, username string) *ArtifactsConfig {
 
 func (ac *ArtifactsConfig) GetClient() *http.Client {
 	return ac.client
+}
+
+func (ac *ArtifactsConfig) GetApiUrl() string {
+	return ac.apiUrl
 }
 
 func (ac *ArtifactsConfig) GetToken() string {
