@@ -127,14 +127,6 @@ type GEItems struct {
 	MaxQuantity int    `json:"max_quantity"`
 }
 
-type Resource struct {
-	Name  string     `json:"name"`
-	Code  string     `json:"code"`
-	Skill string     `json:"skill"`
-	Level int        `json:"level"`
-	Drops []DropFull `json:"drops"`
-}
-
 type Monster struct {
 	Name        string     `json:"name"`
 	Code        string     `json:"code"`
@@ -159,3 +151,12 @@ type SingleItem struct {
 }
 
 type MapSchema Destination
+
+type ActiveEvent struct {
+	Name         string    `json:"name"`
+	Map          MapSchema `json:"map"`
+	PreviousSkin string    `json:"previous_skin"`
+	Duration     int       `json:"duration"`
+	Expiration   string    `json:"expiration"`
+	CreatedAt    string    `json:"created_at"`
+}

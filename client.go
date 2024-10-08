@@ -460,6 +460,31 @@ func (c *ArtifactsMMO) GetMyCharactersInfo() (*[]models.Character, error) {
 	return &ret, nil
 }
 
+// Retrieve the details of the achievements
+func (c *ArtifactsMMO) GetAchievements(ach_type models.AchievementType, page int, size int) (*[]models.BaseAchievement, error) {
+	var ret []models.BaseAchievement
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/achievements")).SetResultStruct(&ret)
+
+	if ach_type != "" {
+		req.SetParam("ach_type", string(ach_type))
+	}
+
+	if page != 0 {
+		req.SetParam("page", strconv.Itoa(page))
+	}
+
+	if size != 0 {
+		req.SetParam("size", strconv.Itoa(size))
+	}
+
+	_, err := req.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
 // Retrieve the details of an achievement
 func (c *ArtifactsMMO) GetAchievement(code string) (*models.BaseAchievement, error) {
 	var ret models.BaseAchievement
@@ -471,6 +496,35 @@ func (c *ArtifactsMMO) GetAchievement(code string) (*models.BaseAchievement, err
 
 	if res.StatusCode == 404 {
 		return nil, models.ErrAchievementNotFound
+	}
+
+	return &ret, nil
+}
+
+// Retrieve the details of the map
+func (c *ArtifactsMMO) GetMaps(content_code string, content_type models.MapContentType, page int, size int) (*[]models.MapSchema, error) {
+	var ret []models.MapSchema
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/maps")).SetResultStruct(&ret)
+
+	if content_code != "" {
+		req.SetParam("content_code", content_code)
+	}
+
+	if content_type != "" {
+		req.SetParam("content_type", string(content_type))
+	}
+
+	if page != 0 {
+		req.SetParam("page", strconv.Itoa(page))
+	}
+
+	if size != 0 {
+		req.SetParam("size", strconv.Itoa(size))
+	}
+
+	_, err := req.Run()
+	if err != nil {
+		return nil, err
 	}
 
 	return &ret, nil
@@ -492,18 +546,44 @@ func (c *ArtifactsMMO) GetMap(x int, y int) (*models.MapSchema, error) {
 	return &ret, nil
 }
 
-// Fetch maps details.
-func (c *ArtifactsMMO) GetMaps(contentCode, contentType string, page, size int) (any, error) {
-	var ret any
+// Retrieve the details of the items
+func (c *ArtifactsMMO) GetItems(craft_material string, craft_skill string, max_level int, min_level int, name string, item_type models.ItemType, page int, size int) (*[]models.Item, error) {
+	var ret []models.Item
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/items")).SetResultStruct(&ret)
 
-	_, err := api.NewRequest(c.Config).
-		SetMethod("GET").
-		SetURL("/maps").
-		SetResultStruct(&ret).
-		SetParam("content_code", contentCode).
-		SetParam("content_type", contentType).
-		SetParam("page", strconv.Itoa(page)).
-		SetParam("size", strconv.Itoa(size)).Run()
+	if craft_material != "" {
+		req.SetParam("craft_material", craft_material)
+	}
+
+	if craft_skill != "" {
+		req.SetParam("craft_skill", craft_skill)
+	}
+
+	if name != "" {
+		req.SetParam("name", name)
+	}
+
+	if item_type != "" {
+		req.SetParam("type", string(item_type))
+	}
+
+	if min_level != 0 {
+		req.SetParam("min_level", strconv.Itoa(min_level))
+	}
+
+	if max_level != 0 {
+		req.SetParam("max_level", strconv.Itoa(max_level))
+	}
+
+	if page != 0 {
+		req.SetParam("page", strconv.Itoa(page))
+	}
+
+	if size != 0 {
+		req.SetParam("size", strconv.Itoa(size))
+	}
+
+	_, err := req.Run()
 	if err != nil {
 		return nil, err
 	}
@@ -527,6 +607,39 @@ func (c *ArtifactsMMO) GetItem(code string) (*models.SingleItem, error) {
 	return &ret, nil
 }
 
+// Retrieve the details of the monsters
+func (c *ArtifactsMMO) GetMonsters(drop string, max_level int, min_level int, page int, size int) (*[]models.Monster, error) {
+	var ret []models.Monster
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/monsters")).SetResultStruct(&ret)
+
+	if drop != "" {
+		req.SetParam("drop", drop)
+	}
+
+	if min_level != 0 {
+		req.SetParam("min_level", strconv.Itoa(min_level))
+	}
+
+	if max_level != 0 {
+		req.SetParam("max_level", strconv.Itoa(max_level))
+	}
+
+	if page != 0 {
+		req.SetParam("page", strconv.Itoa(page))
+	}
+
+	if size != 0 {
+		req.SetParam("size", strconv.Itoa(size))
+	}
+
+	_, err := req.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
 // Retrieve the details of a monster
 func (c *ArtifactsMMO) GetMonster(code string) (*models.Monster, error) {
 	var ret models.Monster
@@ -538,6 +651,101 @@ func (c *ArtifactsMMO) GetMonster(code string) (*models.Monster, error) {
 
 	if res.StatusCode == 404 {
 		return nil, models.ErrMonsterNotFound
+	}
+
+	return &ret, nil
+}
+
+// Retrieve the details of the resources
+func (c *ArtifactsMMO) GetResources(drop string, max_level int, min_level int, skill models.SkillType, page int, size int) (*[]models.Resource, error) {
+	var ret []models.Resource
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/resources")).SetResultStruct(&ret)
+
+	if drop != "" {
+		req.SetParam("drop", drop)
+	}
+
+	if skill != "" {
+		req.SetParam("skill", string(skill))
+	}
+
+	if min_level != 0 {
+		req.SetParam("min_level", strconv.Itoa(min_level))
+	}
+
+	if max_level != 0 {
+		req.SetParam("max_level", strconv.Itoa(max_level))
+	}
+
+	if page != 0 {
+		req.SetParam("page", strconv.Itoa(page))
+	}
+
+	if size != 0 {
+		req.SetParam("size", strconv.Itoa(size))
+	}
+
+	_, err := req.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
+// Retrieve the details of a resource
+func (c *ArtifactsMMO) GetResource(code string) (*models.Resource, error) {
+	var ret models.Resource
+
+	res, err := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/resources/%s", code)).SetResultStruct(&ret).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode == 404 {
+		return nil, models.ErrRessourceNotFound
+	}
+
+	return &ret, nil
+}
+
+// Retrieve all events
+func (c *ArtifactsMMO) GetEvents(page int, size int) (*[]models.ActiveEvent, error) {
+	var ret []models.ActiveEvent
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/maps")).SetResultStruct(&ret)
+
+	if page != 0 {
+		req.SetParam("page", strconv.Itoa(page))
+	}
+
+	if size != 0 {
+		req.SetParam("size", strconv.Itoa(size))
+	}
+
+	_, err := req.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
+// Retrieve the details of the grand exchange items
+func (c *ArtifactsMMO) GetGEItems(page int, size int) (*[]models.GEItem, error) {
+	var ret []models.GEItem
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/ge")).SetResultStruct(&ret)
+
+	if page != 0 {
+		req.SetParam("page", strconv.Itoa(page))
+	}
+
+	if size != 0 {
+		req.SetParam("size", strconv.Itoa(size))
+	}
+
+	_, err := req.Run()
+	if err != nil {
+		return nil, err
 	}
 
 	return &ret, nil
@@ -559,6 +767,43 @@ func (c *ArtifactsMMO) GetGEItem(code string) (*models.GEItems, error) {
 	return &ret, nil
 }
 
+// Retrieve the details of the tasks
+func (c *ArtifactsMMO) GetTasks(skill models.SkillType, task_type models.TaskType, max_level int, min_level int, page int, size int) (*[]models.TaskFull, error) {
+	var ret []models.TaskFull
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/tasks/list")).SetResultStruct(&ret)
+
+	if skill != "" {
+		req.SetParam("skill", string(skill))
+	}
+
+	if task_type != "" {
+		req.SetParam("task_type", string(task_type))
+	}
+
+	if min_level != 0 {
+		req.SetParam("min_level", strconv.Itoa(min_level))
+	}
+
+	if max_level != 0 {
+		req.SetParam("max_level", strconv.Itoa(max_level))
+	}
+
+	if page != 0 {
+		req.SetParam("page", strconv.Itoa(page))
+	}
+
+	if size != 0 {
+		req.SetParam("size", strconv.Itoa(size))
+	}
+
+	_, err := req.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
 // Retrieve the details of a task
 func (c *ArtifactsMMO) GetTask(code string) (*models.TaskFull, error) {
 	var ret models.TaskFull
@@ -570,6 +815,27 @@ func (c *ArtifactsMMO) GetTask(code string) (*models.TaskFull, error) {
 
 	if res.StatusCode == 404 {
 		return nil, models.ErrTaskNotFound
+	}
+
+	return &ret, nil
+}
+
+// Retrieve the details of the tasks rewards
+func (c *ArtifactsMMO) GetTasksRewards(page int, size int) (*[]models.TaskRewardFull, error) {
+	var ret []models.TaskRewardFull
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/tasks/rewards")).SetResultStruct(&ret)
+
+	if page != 0 {
+		req.SetParam("page", strconv.Itoa(page))
+	}
+
+	if size != 0 {
+		req.SetParam("size", strconv.Itoa(size))
+	}
+
+	_, err := req.Run()
+	if err != nil {
+		return nil, err
 	}
 
 	return &ret, nil

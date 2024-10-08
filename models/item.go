@@ -1,5 +1,30 @@
 package models
 
+type ItemType string
+
+const (
+	ItemConsumable ItemType = "consumable"
+	ItemBodyArmor  ItemType = "body_armor"
+	ItemWeapon     ItemType = "weapon"
+	ItemResource   ItemType = "resource"
+	ItemLegArmor   ItemType = "leg_armor"
+	ItemHelmet     ItemType = "helmet"
+	ItemBoots      ItemType = "boots"
+	ItemShield     ItemType = "shield"
+	ItemAmulet     ItemType = "amulet"
+	ItemRing       ItemType = "ring"
+	ItemArtifact   ItemType = "artifact"
+	ItemCurrency   ItemType = "currency"
+)
+
+type SkillType string
+
+const (
+	Mining      SkillType = "mining"
+	WoodCutting SkillType = "woodcutting"
+	Fishing     SkillType = "fishing"
+)
+
 type Item struct {
 	Name        string `json:"name"`
 	Code        string `json:"code"`
@@ -47,4 +72,12 @@ type DropFull struct {
 	Rate        int    `json:"rate"`
 	MinQuantity int    `json:"min_quantity"`
 	MaxQuantity int    `json:"max_quantity"`
+}
+
+type Resource struct {
+	Name  string     `json:"name"`
+	Code  string     `json:"code"`
+	Skill SkillType  `json:"skill"`
+	Level int        `json:"level"`
+	Drops []DropFull `json:"drops"`
 }
