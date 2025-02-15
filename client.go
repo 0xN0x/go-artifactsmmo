@@ -136,6 +136,8 @@ func (c *ArtifactsMMO) Gather() (*models.SkillData, error) {
 	switch res.StatusCode {
 	case 493:
 		return nil, models.ErrInsufficientSkillLevel
+	case 497:
+		return nil, models.ErrCharacterFullInventory
 	case 598:
 		return nil, models.ErrRessourceNotFound
 	}
