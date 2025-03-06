@@ -160,3 +160,9 @@ type ActiveEvent struct {
 	Expiration   string    `json:"expiration"`
 	CreatedAt    string    `json:"created_at"`
 }
+
+type Rest struct {
+	Cooldown   Cooldown  `json:"cooldown"`
+	HpRestored int       `json:"hp_restored"`
+	Character  Character `json:"character"`
+}
