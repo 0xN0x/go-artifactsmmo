@@ -40,9 +40,17 @@ func (hc *HTTPRequest) Set() *HTTPRequest {
 	return hc
 }
 
+func (hc *HTTPRequest) GetRequest() *http.Request {
+	return hc.req
+}
+
 func (hc *HTTPRequest) SetResultStruct(customStruct any) *HTTPRequest {
 	hc.customStruct = customStruct
 	return hc
+}
+
+func (hc *HTTPRequest) GetCustomStruct() any {
+	return hc.customStruct
 }
 
 func (hc *HTTPRequest) SetMethod(method string) *HTTPRequest {
