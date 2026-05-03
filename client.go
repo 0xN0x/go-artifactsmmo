@@ -273,12 +273,12 @@ func (c *ArtifactsMMO) Recycling(code string, quantity int) (*models.Recycling, 
 	return &ret, nil
 }
 
-func (c *ArtifactsMMO) DepositBank(code string, quantity int) (*models.BankItemTransaction, error) {
+func (c *ArtifactsMMO) DepositBank(items []models.SimpleItem) (*models.BankItemTransaction, error) {
 	var ret models.BankItemTransaction
 
-	body := models.SimpleItem{Code: code, Quantity: quantity}
+	body := items
 
-	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/bank/deposit", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/bank/deposit/item", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -318,11 +318,11 @@ func (c *ArtifactsMMO) DepositBankGold(quantity int) (*models.BankGoldTransactio
 	return &ret, nil
 }
 
-func (c *ArtifactsMMO) WithdrawBank(code string, quantity int) (*models.BankItemTransaction, error) {
+func (c *ArtifactsMMO) WithdrawBank(items []models.SimpleItem) (*models.BankItemTransaction, error) {
 	var ret models.BankItemTransaction
 
-	body := models.SimpleItem{Code: code, Quantity: quantity}
-	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/bank/withdraw", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
+	body := items
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/bank/withdraw/item", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
 	if err != nil {
 		return nil, err
 	}
