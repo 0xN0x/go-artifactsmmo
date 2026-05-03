@@ -3,12 +3,24 @@ package models
 type CharacterSkin string
 
 const (
-	CharacterSkinMen1   CharacterSkin = "men1"
-	CharacterSkinMen2   CharacterSkin = "men2"
-	CharacterSkinMen3   CharacterSkin = "men3"
-	CharacterSkinWomen1 CharacterSkin = "women1"
-	CharacterSkinWomen2 CharacterSkin = "women2"
-	CharacterSkinWomen3 CharacterSkin = "women3"
+	CharacterSkinMen1       CharacterSkin = "men1"
+	CharacterSkinMen2       CharacterSkin = "men2"
+	CharacterSkinMen3       CharacterSkin = "men3"
+	CharacterSkinWomen1     CharacterSkin = "women1"
+	CharacterSkinWomen2     CharacterSkin = "women2"
+	CharacterSkinWomen3     CharacterSkin = "women3"
+	CharacterSkinCorrupted1 CharacterSkin = "corrupted1"
+	CharacterSkinZombie1    CharacterSkin = "zombie1"
+	CharacterSkinMarauder1  CharacterSkin = "marauder1"
+	CharacterSkinGoblin1    CharacterSkin = "goblin1"
+)
+
+type LayerMap string
+
+const (
+	LayerInterior    LayerMap = "interior"
+	LayerOverworld   LayerMap = "overworld"
+	LayerUnderground LayerMap = "underground"
 )
 
 type Character struct {
@@ -20,18 +32,19 @@ type Character struct {
 	Xp             int           `json:"xp"`
 	MaxXp          int           `json:"max_xp"`
 	Gold           int           `json:"gold"`
+	Speed          int           `json:"speed"`
 	Hp             int           `json:"hp"`
 	MaxHp          int           `json:"max_hp"`
 	Haste          int           `json:"haste"`
 	CriticalStrike int           `json:"critical_strike"`
-	Stamina        int           `json:"stamina"`
 	Wisdom         int           `json:"wisdom"`
 	Prospecting    int           `json:"prospecting"`
-	// Speed          int           `json:"speed"` not added yet, but on roadmap
 
 	// Position
-	X int `json:"x"`
-	Y int `json:"y"`
+	X     int      `json:"x"`
+	Y     int      `json:"y"`
+	Layer LayerMap `json:"layer"`
+	MapId int      `json:"map_id"`
 
 	// Mining
 	MiningLevel int `json:"mining_level"`
@@ -104,9 +117,9 @@ type Character struct {
 	Artifact2Slot        string `json:"artifact2_slot"`
 	Artifact3Slot        string `json:"artifact3_slot"`
 	Utility1Slot         string `json:"utility1_slot"`
-	Utility1SlotQuantity string `json:"utility1_slot_quantity"`
+	Utility1SlotQuantity int    `json:"utility1_slot_quantity"`
 	Utility2Slot         string `json:"utility2_slot"`
-	Utility2SlotQuantity string `json:"utility2_slot_quantity"`
+	Utility2SlotQuantity int    `json:"utility2_slot_quantity"`
 	BagSlot              string `json:"bag_slot"`
 
 	// Task
