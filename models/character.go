@@ -13,18 +13,21 @@ const (
 
 type Character struct {
 	// Main
-	Name               string        `json:"name"`
-	Skin               CharacterSkin `json:"skin"`
-	Level              int           `json:"level"`
-	Xp                 int           `json:"xp"`
-	MaxXp              int           `json:"max_xp"`
-	AchievementsPoints int           `json:"achievements_points"`
-	Gold               int           `json:"gold"`
-	Speed              int           `json:"speed"`
-	Hp                 int           `json:"hp"`
-	Haste              int           `json:"haste"`
-	CriticalStrike     int           `json:"critical_strike"`
-	Stamina            int           `json:"stamina"`
+	Name           string        `json:"name"`
+	Account        string        `json:"account"`
+	Skin           CharacterSkin `json:"skin"`
+	Level          int           `json:"level"`
+	Xp             int           `json:"xp"`
+	MaxXp          int           `json:"max_xp"`
+	Gold           int           `json:"gold"`
+	Hp             int           `json:"hp"`
+	MaxHp          int           `json:"max_hp"`
+	Haste          int           `json:"haste"`
+	CriticalStrike int           `json:"critical_strike"`
+	Stamina        int           `json:"stamina"`
+	Wisdom         int           `json:"wisdom"`
+	Prospecting    int           `json:"prospecting"`
+	// Speed          int           `json:"speed"` not added yet, but on roadmap
 
 	// Position
 	X int `json:"x"`
@@ -58,6 +61,10 @@ type Character struct {
 	CookingLevel int `json:"cooking_level"`
 	CookingXp    int `json:"cooking_xp"`
 	CookingMaxXp int `json:"cooking_max_xp"`
+	// Alchemy
+	AlchemyLevel int `json:"alchemy_level"`
+	AlchemyXp    int `json:"alchemy_xp"`
+	AlchemyMaxXp int `json:"alchemy_max_xp"`
 
 	// Attacks
 	AttackFire  int `json:"attack_fire"`
@@ -66,6 +73,7 @@ type Character struct {
 	AttackAir   int `json:"attack_air"`
 
 	// Damages
+	Damage      int `json:"dmg"`
 	DamageFire  int `json:"dmg_fire"`
 	DamageEarth int `json:"dmg_earth"`
 	DamageWater int `json:"dmg_water"`
@@ -82,22 +90,24 @@ type Character struct {
 	CooldownExpiration string `json:"cooldown_expiration"`
 
 	// Equipments Slots
-	WeaponSlot              string `json:"weapon_slot"`
-	ShieldSlot              string `json:"shield_slot"`
-	HelmetSlot              string `json:"helmet_slot"`
-	BodyArmorSlot           string `json:"body_armor_slot"`
-	LegArmorSlot            string `json:"leg_armor_slot"`
-	BodySlot                string `json:"body_slot"`
-	Ring1Slot               string `json:"ring1_slot"`
-	Ring2Slot               string `json:"ring2_slot"`
-	AmuletSlot              string `json:"amulet_slot"`
-	Artifact1Slot           string `json:"artifact1_slot"`
-	Artifact2Slot           string `json:"artifact2_slot"`
-	Artifact3Slot           string `json:"artifact3_slot"`
-	Consumable1Slot         string `json:"consumable1_slot"`
-	Consumable1SlotQuantity int    `json:"consumable1_slot_quantity"`
-	Consumable2Slot         string `json:"consumable2_slot"`
-	Consumable2SlotQuantity int    `json:"consumable2_slot_quantity"`
+	WeaponSlot           string `json:"weapon_slot"`
+	RuneSlot             string `json:"rune_slot"`
+	ShieldSlot           string `json:"shield_slot"`
+	HelmetSlot           string `json:"helmet_slot"`
+	BodyArmorSlot        string `json:"body_armor_slot"`
+	LegArmorSlot         string `json:"leg_armor_slot"`
+	BootsSlot            string `json:"boots_slot"`
+	Ring1Slot            string `json:"ring1_slot"`
+	Ring2Slot            string `json:"ring2_slot"`
+	AmuletSlot           string `json:"amulet_slot"`
+	Artifact1Slot        string `json:"artifact1_slot"`
+	Artifact2Slot        string `json:"artifact2_slot"`
+	Artifact3Slot        string `json:"artifact3_slot"`
+	Utility1Slot         string `json:"utility1_slot"`
+	Utility1SlotQuantity string `json:"utility1_slot_quantity"`
+	Utility2Slot         string `json:"utility2_slot"`
+	Utility2SlotQuantity string `json:"utility2_slot_quantity"`
+	BagSlot              string `json:"bag_slot"`
 
 	// Task
 	Task         string `json:"task"`

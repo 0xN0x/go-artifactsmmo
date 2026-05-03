@@ -31,18 +31,15 @@ type SimpleEffect struct {
 }
 
 type Item struct {
-	Name        string `json:"name"`
-	Code        string `json:"code"`
-	Level       int    `json:"level"`
-	Type        string `json:"type"`
-	SubType     string `json:"subtype"`
-	Description string `json:"description"`
-	Effects     []struct {
-		Name  string `json:"name"`
-		Value int    `json:"value"`
-	} `json:"effects"`
-
-	Craft Craft `json:"craft"`
+	Name        string         `json:"name"`
+	Code        string         `json:"code"`
+	Level       int            `json:"level"`
+	Type        string         `json:"type"`
+	SubType     string         `json:"subtype"`
+	Description string         `json:"description"`
+	Effects     []SimpleEffect `json:"effects"`
+	Craft       Craft          `json:"craft"`
+	Tradeable   bool           `json:"tradeable"`
 }
 
 type Craft struct {

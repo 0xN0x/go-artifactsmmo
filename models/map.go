@@ -9,6 +9,7 @@ const (
 	MapBank          MapContentType = "bank"
 	MapGrandExchange MapContentType = "grand_exchange"
 	MapTasksMaster   MapContentType = "tasks_master"
+	MapNPC           MapContentType = "npc"
 )
 
 type Destination struct {

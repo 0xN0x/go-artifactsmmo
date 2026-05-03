@@ -188,3 +188,9 @@ type Event struct {
 	Duration int        `json:"duration"`
 	Rate     int        `json:"rate"`
 }
+
+type NPCTransactionResponse struct {
+	Cooldown    Cooldown       `json:"cooldown"`
+	Transaction NPCTransaction `json:"transaction"`
+	Character   Character      `json:"character"`
+}

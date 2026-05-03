@@ -45,9 +45,13 @@ const (
 	ErrBankFull              ArtifactError = "bank is full"
 	ErrInsufficientGold      ArtifactError = "insufficient gold"
 
-	ErrTooManyItems         ArtifactError = "can't buy or sell that many items at the same time"
-	ErrNoStock              ArtifactError = "no stock for this item"
-	ErrNoItem               ArtifactError = "no item at this price"
-	ErrTransactionOther     ArtifactError = "transaction is already in progress on this item by a another character"
-	ErrTransactionCharacter ArtifactError = "transaction is already in progress by your character"
+	ErrTooManyItems          ArtifactError = "can't buy or sell that many items at the same time"
+	ErrNoStock               ArtifactError = "no stock for this item"
+	ErrNoItem                ArtifactError = "no item at this price"
+	ErrTransactionOther      ArtifactError = "transaction is already in progress on this item by a another character"
+	ErrTransactionCharacter  ArtifactError = "transaction is already in progress by your character"
+	ErrItemCannotBePurchased ArtifactError = "item cannot be purchased"
+	ErrItemCannotBeSold      ArtifactError = "item cannot be sold"
+	ErrNPCNotFoundOnThisMap  ArtifactError = "NPC not found on this map"
+	ErrNPCNotFound           ArtifactError = "NPC not found"
 )
