@@ -15,6 +15,7 @@ const (
 	ItemRing       ItemType = "ring"
 	ItemArtifact   ItemType = "artifact"
 	ItemCurrency   ItemType = "currency"
+	ItemNone       ItemType = ""
 )
 
 type SkillType string

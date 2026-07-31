@@ -752,43 +752,6 @@ func (c *ArtifactsMMO) GetActiveEvents(page int, size int) (*[]models.ActiveEven
 	return &ret, nil
 }
 
-// Retrieve the details of the grand exchange items
-func (c *ArtifactsMMO) GetGEItems(page int, size int) (*[]models.GEItem, error) {
-	var ret []models.GEItem
-	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/ge")).SetResultStruct(&ret)
-
-	if page != 0 {
-		req.SetParam("page", strconv.Itoa(page))
-	}
-
-	if size != 0 {
-		req.SetParam("size", strconv.Itoa(size))
-	}
-
-	_, err := req.Run()
-	if err != nil {
-		return nil, err
-	}
-
-	return &ret, nil
-}
-
-// Retrieve the details of a ge item
-func (c *ArtifactsMMO) GetGEItem(code string) (*models.GEItems, error) {
-	var ret models.GEItems
-
-	res, err := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/ge/%s", code)).SetResultStruct(&ret).Run()
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode == 404 {
-		return nil, models.ErrItemNotFound
-	}
-
-	return &ret, nil
-}
-
 // Retrieve the details of the tasks
 func (c *ArtifactsMMO) GetTasks(skill models.SkillType, task_type models.TaskType, max_level int, min_level int, page int, size int) (*[]models.TaskFull, error) {
 	var ret []models.TaskFull
@@ -1008,6 +971,63 @@ func (c *ArtifactsMMO) GetNPCItems(code string, page int, size int) (*[]models.N
 
 	if res.StatusCode == 404 {
 		return nil, models.ErrNPCNotFound
+	}
+
+	return &ret, nil
+}
+
+/*
+	=== Grand Exchange ===
+*/
+
+// Retrieve the details of the grand exchange orders
+func (c *ArtifactsMMO) GetGEOrders(code string, ge_type GEType, account string, item_type ItemType, page int, size int) (*[]models.GEOrderSchema, error) {
+	var ret []models.GEItem
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/grandexchange/orders")).SetResultStruct(&ret)
+
+	if code != "" {
+		req.SetParam("code", code)
+	}
+
+	if account != "" {
+		req.SetParam("account", account)
+	}
+
+	if item_type != ItemNone {
+		req.SetParam("type", item_type)
+	}
+
+	if ge_type != GENone {
+		req.SetParam("type", ge_type)
+	}
+
+	if page != 0 {
+		req.SetParam("page", strconv.Itoa(page))
+	}
+
+	if size != 0 {
+		req.SetParam("size", strconv.Itoa(size))
+	}
+
+	_, err := req.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
+// Retrieve the details of a ge order
+func (c *ArtifactsMMO) GetGEItem(id string) (*models.GEOrderSchema, error) {
+	var ret models.GEItems
+
+	res, err := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/grandexchange/orders/%s", id)).SetResultStruct(&ret).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode == 404 {
+		return nil, models.ErrItemNotFound
 	}
 
 	return &ret, nil
