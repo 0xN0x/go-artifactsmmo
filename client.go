@@ -1032,3 +1032,28 @@ func (c *ArtifactsMMO) GetGEItem(id string) (*models.GEOrderSchema, error) {
 
 	return &ret, nil
 }
+
+// Retrieve the history of an item in ge
+func (c *ArtifactsMMO) GetGEHistory(code string, account string, page int, size int) (*[]models.GEHistorySchema, error) {
+	var ret []models.GEHistorySchema
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/grandexchange/history/%s", code)).SetResultStruct(&ret)
+
+	if account != "" {
+		req.SetParam("account", account)
+	}
+
+	if page != 0 {
+		req.SetParam("page", strconv.Itoa(page))
+	}
+
+	if size != 0 {
+		req.SetParam("size", strconv.Itoa(size))
+	}
+
+	_, err := req.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}

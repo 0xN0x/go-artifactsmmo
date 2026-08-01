@@ -30,4 +30,13 @@ type GEOrderSchema struct {
 	Price     int    `json:"price"`
 	CreatedAt string `json:"created_at"`
 }
+
+type GEHistorySchema struct {
+	Id       string `json:"order_id"`
+	Seller   string `json:"seller"`
+	Buyer    string `json:"buyer"`
+	Code     string `json:"code"`
+	Quantity int    `json:"quantity"`
+	Price    int    `json:"price"`
+	SoldAt   string `json:"sold_at"`
 }
