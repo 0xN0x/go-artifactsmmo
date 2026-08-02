@@ -431,28 +431,33 @@ func (c *ArtifactsMMO) BuyGE(id string, quantity int) (*models.GETransactionResp
 	return &ret, nil
 }
 
-func (c *ArtifactsMMO) SellGE(code string, quantity int, price int) (*models.GETransaction, error) {
-	var ret models.GETransaction
 
-	body := models.GEItem{Code: code, Quantity: quantity, Price: price}
-	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/ge/sell", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
+func (c *ArtifactsMMO) SellGE(code string, quantity int, price int) (*models.GETransactionResponse, error) {
+	var ret models.GETransactionResponse
+
+	body := models.GESellItem{Code: code, Quantity: quantity, Price: price}
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/grandexchange/create_sell_order", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
 	if err != nil {
 		return nil, err
 	}
 
 	switch res.StatusCode {
-	case 479:
-		return nil, models.ErrTooManyItems
-	case 480:
-		return nil, models.ErrNoStock
-	case 482:
-		return nil, models.ErrNoItem
-	case 483:
-		return nil, models.ErrTransactionInProgress
+	case 404:
+		return nil, models.ErrItemNotFound
+	case 422:
+		return nil, models.ErrInvalidPayload
+	case 433:
+		return nil, models.ErrTransactionTooMany
+	case 437:
+		return nil, models.ErrItemCannotBeSold
+	case 478:
+		return nil, models.ErrMissingItem
 	case 486:
-		return nil, models.ErrTransactionCharacter
-	case 492:
-		return nil, models.ErrInsufficientGold
+		return nil, models.ErrActionInProgress
+	case 498:
+		return nil, models.ErrCharacterNotFound
+	case 499:
+		return nil, models.ErrCharacterInCooldown
 	case 598:
 		return nil, models.ErrGENotFound
 	}

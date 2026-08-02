@@ -14,17 +14,18 @@ type GETransaction struct {
 	Quantity   int    `json:"quantity"`
 	Price      int    `json:"price"`
 	TotalPrice int    `json:"total_price"`
-}
-
-type GEItem struct {
-	Code     string `json:"code"`
-	Quantity int    `json:"quantity"`
-	Price    int    `json:"price"`
+	CreatedAt  string `json:"created_at,omitempty"`
 }
 
 type GEBuyItem struct {
 	Id       string `json:"id"`
 	Quantity int    `json:"quantity"`
+}
+
+type GESellItem struct {
+	Code     string `json:"code"`
+	Quantity int    `json:"quantity"`
+	Price    int    `json:"price"`
 }
 
 type GEOrderSchema struct {
