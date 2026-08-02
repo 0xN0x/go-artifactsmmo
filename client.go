@@ -1050,9 +1050,13 @@ func (c *ArtifactsMMO) GetGEHistory(code string, account string, page int, size 
 		req.SetParam("size", strconv.Itoa(size))
 	}
 
-	_, err := req.Run()
+	res, err := req.Run()
 	if err != nil {
 		return nil, err
+	}
+
+	if res.StatusCode == 404 {
+		return nil, models.ErrItemNotFound
 	}
 
 	return &ret, nil
