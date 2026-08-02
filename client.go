@@ -981,8 +981,8 @@ func (c *ArtifactsMMO) GetNPCItems(code string, page int, size int) (*[]models.N
 */
 
 // Retrieve the details of the grand exchange orders
-func (c *ArtifactsMMO) GetGEOrders(code string, ge_type GEType, account string, item_type ItemType, page int, size int) (*[]models.GEOrderSchema, error) {
-	var ret []models.GEItem
+func (c *ArtifactsMMO) GetGEOrders(code string, ge_type models.GEType, account string, item_type models.ItemType, page int, size int) (*[]models.GEOrderSchema, error) {
+	var ret []models.GEOrderSchema
 	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/grandexchange/orders")).SetResultStruct(&ret)
 
 	if code != "" {
@@ -993,12 +993,12 @@ func (c *ArtifactsMMO) GetGEOrders(code string, ge_type GEType, account string, 
 		req.SetParam("account", account)
 	}
 
-	if item_type != ItemNone {
-		req.SetParam("type", item_type)
+	if item_type != models.ItemNone {
+		req.SetParam("type", string(item_type))
 	}
 
-	if ge_type != GENone {
-		req.SetParam("type", ge_type)
+	if ge_type != models.GENone {
+		req.SetParam("type", string(ge_type))
 	}
 
 	if page != 0 {
@@ -1018,8 +1018,8 @@ func (c *ArtifactsMMO) GetGEOrders(code string, ge_type GEType, account string, 
 }
 
 // Retrieve the details of a ge order
-func (c *ArtifactsMMO) GetGEItem(id string) (*models.GEOrderSchema, error) {
-	var ret models.GEItems
+func (c *ArtifactsMMO) GetGEOrder(id string) (*models.GEOrderSchema, error) {
+	var ret models.GEOrderSchema
 
 	res, err := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/grandexchange/orders/%s", id)).SetResultStruct(&ret).Run()
 	if err != nil {

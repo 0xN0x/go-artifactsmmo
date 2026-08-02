@@ -149,8 +149,8 @@ type Monster struct {
 }
 
 type SingleItem struct {
-	Item Item         `json:"item"`
-	GE   GEItemSchema `json:"ge"`
+	Item Item `json:"item"`
+	//GE   GEItemSchema `json:"ge"`
 }
 
 type MapSchema Destination
