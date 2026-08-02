@@ -36,18 +36,6 @@ func NewClientWithCustomHttpClient(token string, username string, httpClient *ht
 	}
 }
 
-// Start a fight against a monster on the character's map.
-func (c *ArtifactsMMO) Fight() (*models.CharacterFight, error) {
-	var fight models.CharacterFight
-
-	_, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/fight", c.Config.GetUsername())).SetResultStruct(&fight).Run()
-	if err != nil {
-		return nil, err
-	}
-
-	return &fight, nil
-}
-
 // Retrieve the details of a character.
 func (c *ArtifactsMMO) GetCharacterInfo(name string) (*models.Character, error) {
 	var character models.Character
@@ -58,6 +46,34 @@ func (c *ArtifactsMMO) GetCharacterInfo(name string) (*models.Character, error) 
 	}
 
 	return &character, nil
+}
+
+/*
+	=== Character ===
+*/
+
+// Retrieve the details of all the characters.
+func (c *ArtifactsMMO) GetMyCharactersInfo() (*[]models.Character, error) {
+	var ret []models.Character
+
+	_, err := api.NewRequest(c.Config).SetMethod("GET").SetURL("/my/characters").SetResultStruct(&ret).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
+// Start a fight against a monster on the character's map.
+func (c *ArtifactsMMO) Fight() (*models.CharacterFight, error) {
+	var fight models.CharacterFight
+
+	_, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/fight", c.Config.GetUsername())).SetResultStruct(&fight).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &fight, nil
 }
 
 // Moves a character on the map using the map's X and Y position.
@@ -441,18 +457,6 @@ func (c *ArtifactsMMO) DeleteItem(code string, quantity int) (*models.ItemRepons
 
 	body := models.SimpleItem{Code: code, Quantity: quantity}
 	_, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/delete", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
-	if err != nil {
-		return nil, err
-	}
-
-	return &ret, nil
-}
-
-// Retrieve the details of all the characters.
-func (c *ArtifactsMMO) GetMyCharactersInfo() (*[]models.Character, error) {
-	var ret []models.Character
-
-	_, err := api.NewRequest(c.Config).SetMethod("GET").SetURL("/my/characters").SetResultStruct(&ret).Run()
 	if err != nil {
 		return nil, err
 	}
