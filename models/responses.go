@@ -34,9 +34,9 @@ type BankTransaction struct {
 }
 
 type GETransactionResponse struct {
-	Cooldown    Cooldown      `json:"cooldown"`
-	Transaction GETransaction `json:"transaction"`
-	Character   Character     `json:"character"`
+	Cooldown  Cooldown      `json:"cooldown"`
+	Order     GETransaction `json:"order"`
+	Character Character     `json:"character"`
 }
 
 type ItemReponse struct {
