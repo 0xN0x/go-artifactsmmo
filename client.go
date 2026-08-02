@@ -36,18 +36,6 @@ func NewClientWithCustomHttpClient(token string, username string, httpClient *ht
 	}
 }
 
-// Start a fight against a monster on the character's map.
-func (c *ArtifactsMMO) Fight() (*models.CharacterFight, error) {
-	var fight models.CharacterFight
-
-	_, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/fight", c.Config.GetUsername())).SetResultStruct(&fight).Run()
-	if err != nil {
-		return nil, err
-	}
-
-	return &fight, nil
-}
-
 // Retrieve the details of a character.
 func (c *ArtifactsMMO) GetCharacterInfo(name string) (*models.Character, error) {
 	var character models.Character
@@ -58,6 +46,96 @@ func (c *ArtifactsMMO) GetCharacterInfo(name string) (*models.Character, error) 
 	}
 
 	return &character, nil
+}
+
+/*
+	=== Account ===
+*/
+
+// Retrieve the details of all the characters.
+func (c *ArtifactsMMO) GetMyCharactersInfo() (*[]models.Character, error) {
+	var ret []models.Character
+
+	_, err := api.NewRequest(c.Config).SetMethod("GET").SetURL("/my/characters").SetResultStruct(&ret).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) GetMyGEOrders(code string, page int, size int, ge_type models.GEType) (*[]models.GEOrderSchema, error) {
+	var ret []models.GEOrderSchema
+
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL("/my/grandexchange/orders").SetResultStruct(&ret)
+
+	if code != "" {
+		req.SetParam("code", code)
+	}
+
+	if ge_type != models.GENone {
+		req.SetParam("type", string(ge_type))
+	}
+
+	if page != 0 {
+		req.SetParam("page", strconv.Itoa(page))
+	}
+
+	if size != 0 {
+		req.SetParam("size", strconv.Itoa(size))
+	}
+
+	_, err := req.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) GetMyGEHistory(code string, id string, page int, size int) (*[]models.GEHistorySchema, error) {
+	var ret []models.GEHistorySchema
+
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL("/my/grandexchange/history").SetResultStruct(&ret)
+
+	if code != "" {
+		req.SetParam("code", code)
+	}
+
+	if id != "" {
+		req.SetParam("id", id)
+	}
+
+	if page != 0 {
+		req.SetParam("page", strconv.Itoa(page))
+	}
+
+	if size != 0 {
+		req.SetParam("size", strconv.Itoa(size))
+	}
+
+	_, err := req.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
+/*
+	=== Character ===
+*/
+
+// Start a fight against a monster on the character's map.
+func (c *ArtifactsMMO) Fight() (*models.CharacterFight, error) {
+	var fight models.CharacterFight
+
+	_, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/fight", c.Config.GetUsername())).SetResultStruct(&fight).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &fight, nil
 }
 
 // Moves a character on the map using the map's X and Y position.
@@ -378,28 +456,36 @@ func (c *ArtifactsMMO) BuyBankExpansion() (*models.BankTransaction, error) {
 	return &ret, nil
 }
 
-func (c *ArtifactsMMO) BuyGE(code string, quantity int, price int) (*models.GETransaction, error) {
-	var ret models.GETransaction
+func (c *ArtifactsMMO) BuyGE(id string, quantity int) (*models.GETransactionResponse, error) {
+	var ret models.GETransactionResponse
 
-	body := models.GEItem{Code: code, Quantity: quantity, Price: price}
-	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/ge/buy", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
+	body := models.GEBuyItem{Id: id, Quantity: quantity}
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/grandexchange/buy", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
 	if err != nil {
 		return nil, err
 	}
 
 	switch res.StatusCode {
-	case 479:
+	case 404:
+		return nil, models.ErrGEOrderNotFound
+	case 422:
+		return nil, models.ErrInvalidPayload
+	case 434:
 		return nil, models.ErrTooManyItems
-	case 480:
-		return nil, models.ErrNoStock
-	case 482:
-		return nil, models.ErrNoItem
-	case 483:
-		return nil, models.ErrTransactionInProgress
+	case 435:
+		return nil, models.ErrTransactionSelf
+	case 436:
+		return nil, models.ErrTransactionOther
 	case 486:
-		return nil, models.ErrTransactionCharacter
+		return nil, models.ErrActionInProgress
 	case 492:
 		return nil, models.ErrInsufficientGold
+	case 497:
+		return nil, models.ErrCharacterFullInventory
+	case 498:
+		return nil, models.ErrCharacterNotFound
+	case 499:
+		return nil, models.ErrCharacterInCooldown
 	case 598:
 		return nil, models.ErrGENotFound
 	}
@@ -407,28 +493,133 @@ func (c *ArtifactsMMO) BuyGE(code string, quantity int, price int) (*models.GETr
 	return &ret, nil
 }
 
-func (c *ArtifactsMMO) SellGE(code string, quantity int, price int) (*models.GETransaction, error) {
-	var ret models.GETransaction
+func (c *ArtifactsMMO) SellGE(code string, quantity int, price int) (*models.GETransactionResponse, error) {
+	var ret models.GETransactionResponse
 
-	body := models.GEItem{Code: code, Quantity: quantity, Price: price}
-	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/ge/sell", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
+	body := models.GESellItem{Code: code, Quantity: quantity, Price: price}
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/grandexchange/create_sell_order", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
 	if err != nil {
 		return nil, err
 	}
 
 	switch res.StatusCode {
-	case 479:
-		return nil, models.ErrTooManyItems
-	case 480:
-		return nil, models.ErrNoStock
-	case 482:
-		return nil, models.ErrNoItem
-	case 483:
-		return nil, models.ErrTransactionInProgress
+	case 404:
+		return nil, models.ErrItemNotFound
+	case 422:
+		return nil, models.ErrInvalidPayload
+	case 433:
+		return nil, models.ErrTransactionTooMany
+	case 437:
+		return nil, models.ErrItemCannotBeSold
+	case 478:
+		return nil, models.ErrMissingItem
 	case 486:
-		return nil, models.ErrTransactionCharacter
+		return nil, models.ErrActionInProgress
+	case 498:
+		return nil, models.ErrCharacterNotFound
+	case 499:
+		return nil, models.ErrCharacterInCooldown
+	case 598:
+		return nil, models.ErrGENotFound
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) CancelGE(id string) (*models.GETransactionResponse, error) {
+	var ret models.GETransactionResponse
+
+	body := models.GEBuyItem{Id: id}
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/grandexchange/cancel", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 404:
+		return nil, models.ErrGEOrderNotFound
+	case 422:
+		return nil, models.ErrInvalidPayload
+	case 436:
+		return nil, models.ErrTransactionOther
+	case 438:
+		return nil, models.ErrTransactionCancelOther
+	case 486:
+		return nil, models.ErrActionInProgress
+	case 497:
+		return nil, models.ErrCharacterFullInventory
+	case 498:
+		return nil, models.ErrCharacterNotFound
+	case 499:
+		return nil, models.ErrCharacterInCooldown
+	case 598:
+		return nil, models.ErrGENotFound
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) CreateBuyGE(code string, quantity int, price int) (*models.GETransactionResponse, error) {
+	var ret models.GETransactionResponse
+
+	body := models.GESellItem{Code: code, Quantity: quantity, Price: price}
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/grandexchange/create_buy_order", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 404:
+		return nil, models.ErrItemNotFound
+	case 422:
+		return nil, models.ErrInvalidPayload
+	case 433:
+		return nil, models.ErrTransactionTooMany
+	case 437:
+		return nil, models.ErrItemCannotBeSold
+	case 486:
+		return nil, models.ErrActionInProgress
 	case 492:
 		return nil, models.ErrInsufficientGold
+	case 498:
+		return nil, models.ErrCharacterNotFound
+	case 499:
+		return nil, models.ErrCharacterInCooldown
+	case 598:
+		return nil, models.ErrGENotFound
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) FillGE(id string, quantity int) (*models.GETransactionResponse, error) {
+	var ret models.GETransactionResponse
+
+	body := models.GEBuyItem{Id: id, Quantity: quantity}
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/grandexchange/fill", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 404:
+		return nil, models.ErrGEOrderNotFound
+	case 422:
+		return nil, models.ErrInvalidPayload
+	case 434:
+		return nil, models.ErrTooManyItems
+	case 435:
+		return nil, models.ErrTransactionSelf
+	case 436:
+		return nil, models.ErrTransactionOther
+	case 478:
+		return nil, models.ErrMissingItem
+	case 486:
+		return nil, models.ErrActionInProgress
+	case 498:
+		return nil, models.ErrCharacterNotFound
+	case 499:
+		return nil, models.ErrCharacterInCooldown
 	case 598:
 		return nil, models.ErrGENotFound
 	}
@@ -448,13 +639,70 @@ func (c *ArtifactsMMO) DeleteItem(code string, quantity int) (*models.ItemRepons
 	return &ret, nil
 }
 
-// Retrieve the details of all the characters.
-func (c *ArtifactsMMO) GetMyCharactersInfo() (*[]models.Character, error) {
-	var ret []models.Character
+func (c *ArtifactsMMO) Rest() (*models.Rest, error) {
+	var ret models.Rest
 
-	_, err := api.NewRequest(c.Config).SetMethod("GET").SetURL("/my/characters").SetResultStruct(&ret).Run()
+	_, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/rest", c.Config.GetUsername())).SetResultStruct(&ret).Run()
 	if err != nil {
 		return nil, err
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) UseItem(code string, quantity int) (*models.UseItem, error) {
+	var ret models.UseItem
+
+	body := models.SimpleItem{Code: code, Quantity: quantity}
+	_, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/use", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) NPCBuyItem(code string, quantity int) (*models.NPCTransactionResponse, error) {
+	var ret models.NPCTransactionResponse
+
+	body := models.SimpleItem{Code: code, Quantity: quantity}
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/npc/buy", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 404:
+		return nil, models.ErrItemNotFound
+	case 441:
+		return nil, models.ErrItemCannotBePurchased
+	case 492:
+		return nil, models.ErrInsufficientGold
+	case 598:
+		return nil, models.ErrNPCNotFoundOnThisMap
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) NPCSellItem(code string, quantity int) (*models.NPCTransactionResponse, error) {
+	var ret models.NPCTransactionResponse
+
+	body := models.SimpleItem{Code: code, Quantity: quantity}
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/npc/sell", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 404:
+		return nil, models.ErrItemNotFound
+	case 442:
+		return nil, models.ErrItemCannotBeSold
+	case 492:
+		return nil, models.ErrInsufficientGold
+	case 598:
+		return nil, models.ErrNPCNotFoundOnThisMap
 	}
 
 	return &ret, nil
@@ -752,43 +1000,6 @@ func (c *ArtifactsMMO) GetActiveEvents(page int, size int) (*[]models.ActiveEven
 	return &ret, nil
 }
 
-// Retrieve the details of the grand exchange items
-func (c *ArtifactsMMO) GetGEItems(page int, size int) (*[]models.GEItem, error) {
-	var ret []models.GEItem
-	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/ge")).SetResultStruct(&ret)
-
-	if page != 0 {
-		req.SetParam("page", strconv.Itoa(page))
-	}
-
-	if size != 0 {
-		req.SetParam("size", strconv.Itoa(size))
-	}
-
-	_, err := req.Run()
-	if err != nil {
-		return nil, err
-	}
-
-	return &ret, nil
-}
-
-// Retrieve the details of a ge item
-func (c *ArtifactsMMO) GetGEItem(code string) (*models.GEItems, error) {
-	var ret models.GEItems
-
-	res, err := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/ge/%s", code)).SetResultStruct(&ret).Run()
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode == 404 {
-		return nil, models.ErrItemNotFound
-	}
-
-	return &ret, nil
-}
-
 // Retrieve the details of the tasks
 func (c *ArtifactsMMO) GetTasks(skill models.SkillType, task_type models.TaskType, max_level int, min_level int, page int, size int) (*[]models.TaskFull, error) {
 	var ret []models.TaskFull
@@ -879,75 +1090,6 @@ func (c *ArtifactsMMO) GetTaskReward(code string) (*models.TaskRewardFull, error
 	return &ret, nil
 }
 
-func (c *ArtifactsMMO) Rest() (*models.Rest, error) {
-	var ret models.Rest
-
-	_, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/rest", c.Config.GetUsername())).SetResultStruct(&ret).Run()
-	if err != nil {
-		return nil, err
-	}
-
-	return &ret, nil
-}
-
-func (c *ArtifactsMMO) UseItem(code string, quantity int) (*models.UseItem, error) {
-	var ret models.UseItem
-
-	body := models.SimpleItem{Code: code, Quantity: quantity}
-	_, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/use", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
-	if err != nil {
-		return nil, err
-	}
-
-	return &ret, nil
-}
-
-func (c *ArtifactsMMO) NPCBuyItem(code string, quantity int) (*models.NPCTransactionResponse, error) {
-	var ret models.NPCTransactionResponse
-
-	body := models.SimpleItem{Code: code, Quantity: quantity}
-	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/npc/buy", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
-	if err != nil {
-		return nil, err
-	}
-
-	switch res.StatusCode {
-	case 404:
-		return nil, models.ErrItemNotFound
-	case 441:
-		return nil, models.ErrItemCannotBePurchased
-	case 492:
-		return nil, models.ErrInsufficientGold
-	case 598:
-		return nil, models.ErrNPCNotFoundOnThisMap
-	}
-
-	return &ret, nil
-}
-
-func (c *ArtifactsMMO) NPCSellItem(code string, quantity int) (*models.NPCTransactionResponse, error) {
-	var ret models.NPCTransactionResponse
-
-	body := models.SimpleItem{Code: code, Quantity: quantity}
-	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/npc/sell", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
-	if err != nil {
-		return nil, err
-	}
-
-	switch res.StatusCode {
-	case 404:
-		return nil, models.ErrItemNotFound
-	case 442:
-		return nil, models.ErrItemCannotBeSold
-	case 492:
-		return nil, models.ErrInsufficientGold
-	case 598:
-		return nil, models.ErrNPCNotFoundOnThisMap
-	}
-
-	return &ret, nil
-}
-
 func (c *ArtifactsMMO) GetAllNPCs(npc_type models.NPCType, page int, size int) (*[]models.NPC, error) {
 	var ret []models.NPC
 
@@ -1008,6 +1150,92 @@ func (c *ArtifactsMMO) GetNPCItems(code string, page int, size int) (*[]models.N
 
 	if res.StatusCode == 404 {
 		return nil, models.ErrNPCNotFound
+	}
+
+	return &ret, nil
+}
+
+/*
+	=== Grand Exchange ===
+*/
+
+// Retrieve the details of the grand exchange orders
+func (c *ArtifactsMMO) GetGEOrders(code string, ge_type models.GEType, account string, item_type models.ItemType, page int, size int) (*[]models.GEOrderSchema, error) {
+	var ret []models.GEOrderSchema
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/grandexchange/orders")).SetResultStruct(&ret)
+
+	if code != "" {
+		req.SetParam("code", code)
+	}
+
+	if account != "" {
+		req.SetParam("account", account)
+	}
+
+	if item_type != models.ItemNone {
+		req.SetParam("type", string(item_type))
+	}
+
+	if ge_type != models.GENone {
+		req.SetParam("type", string(ge_type))
+	}
+
+	if page != 0 {
+		req.SetParam("page", strconv.Itoa(page))
+	}
+
+	if size != 0 {
+		req.SetParam("size", strconv.Itoa(size))
+	}
+
+	_, err := req.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
+// Retrieve the details of a ge order
+func (c *ArtifactsMMO) GetGEOrder(id string) (*models.GEOrderSchema, error) {
+	var ret models.GEOrderSchema
+
+	res, err := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/grandexchange/orders/%s", id)).SetResultStruct(&ret).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode == 404 {
+		return nil, models.ErrGEOrderNotFound
+	}
+
+	return &ret, nil
+}
+
+// Retrieve the history of an item in ge
+func (c *ArtifactsMMO) GetGEHistory(code string, account string, page int, size int) (*[]models.GEHistorySchema, error) {
+	var ret []models.GEHistorySchema
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/grandexchange/history/%s", code)).SetResultStruct(&ret)
+
+	if account != "" {
+		req.SetParam("account", account)
+	}
+
+	if page != 0 {
+		req.SetParam("page", strconv.Itoa(page))
+	}
+
+	if size != 0 {
+		req.SetParam("size", strconv.Itoa(size))
+	}
+
+	res, err := req.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode == 404 {
+		return nil, models.ErrItemHistoryNotFound
 	}
 
 	return &ret, nil

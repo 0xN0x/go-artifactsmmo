@@ -7,10 +7,12 @@ func (err ArtifactError) Error() string {
 }
 
 const (
-	ErrBadToken ArtifactError = "failed to parse token: token is missing or empty"
+	ErrBadToken       ArtifactError = "failed to parse token: token is missing or empty"
+	ErrInvalidPayload ArtifactError = "request not processed: invalid payload"
 
 	ErrMapNotFound         ArtifactError = "map not found"
 	ErrItemNotFound        ArtifactError = "item not found"
+	ErrItemHistoryNotFound ArtifactError = "item history not found"
 	ErrCharacterNotFound   ArtifactError = "character not found"
 	ErrRessourceNotFound   ArtifactError = "ressource not found on this map"
 	ErrCraftNotFound       ArtifactError = "craft not found"
@@ -22,6 +24,7 @@ const (
 	ErrMonsterNotFound     ArtifactError = "monster not found"
 	ErrTaskNotFound        ArtifactError = "task not found"
 	ErrRewardNotFound      ArtifactError = "task reward not found"
+	ErrGEOrderNotFound     ArtifactError = "order not found"
 
 	ErrInsufficientQuantity   ArtifactError = "missing item or insufficient quantity"
 	ErrTooMuchConsumables     ArtifactError = "can't equip more than 100 consumables"
@@ -45,13 +48,17 @@ const (
 	ErrBankFull              ArtifactError = "bank is full"
 	ErrInsufficientGold      ArtifactError = "insufficient gold"
 
-	ErrTooManyItems          ArtifactError = "can't buy or sell that many items at the same time"
-	ErrNoStock               ArtifactError = "no stock for this item"
-	ErrNoItem                ArtifactError = "no item at this price"
-	ErrTransactionOther      ArtifactError = "transaction is already in progress on this item by a another character"
-	ErrTransactionCharacter  ArtifactError = "transaction is already in progress by your character"
-	ErrItemCannotBePurchased ArtifactError = "item cannot be purchased"
-	ErrItemCannotBeSold      ArtifactError = "item cannot be sold"
-	ErrNPCNotFoundOnThisMap  ArtifactError = "NPC not found on this map"
-	ErrNPCNotFound           ArtifactError = "NPC not found"
+	ErrTooManyItems           ArtifactError = "the order has not this quantity"
+	ErrTransactionSelf        ArtifactError = "can't trade with yourself"
+	ErrTransactionOther       ArtifactError = "transaction is already in progress on this order by a another character"
+	ErrTransactionTooMany     ArtifactError = "can't create more than 100 orders"
+	ErrTransactionCancelOther ArtifactError = "can't cancel an order that is not yours"
+	ErrNoStock                ArtifactError = "no stock for this item"
+	ErrNoItem                 ArtifactError = "no item at this price"
+	ErrMissingItem            ArtifactError = "missing required item"
+	ErrTransactionCharacter   ArtifactError = "transaction is already in progress by your character"
+	ErrItemCannotBePurchased  ArtifactError = "item cannot be purchased"
+	ErrItemCannotBeSold       ArtifactError = "item cannot be sold"
+	ErrNPCNotFoundOnThisMap   ArtifactError = "NPC not found on this map"
+	ErrNPCNotFound            ArtifactError = "NPC not found"
 )
