@@ -64,6 +64,64 @@ func (c *ArtifactsMMO) GetMyCharactersInfo() (*[]models.Character, error) {
 	return &ret, nil
 }
 
+func (c *ArtifactsMMO) GetMyGEOrders(code string, page int, size int, ge_type models.GEType) (*[]models.GEOrderSchema, error) {
+	var ret []models.GEOrderSchema
+
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL("/my/grandexchange/orders").SetResultStruct(&ret)
+
+	if code != "" {
+		req.SetParam("code", code)
+	}
+
+	if ge_type != models.GENone {
+		req.SetParam("type", string(ge_type))
+	}
+
+	if page != 0 {
+		req.SetParam("page", strconv.Itoa(page))
+	}
+
+	if size != 0 {
+		req.SetParam("size", strconv.Itoa(size))
+	}
+
+	_, err := req.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) GetMyGEHistory(code string, id string, page int, size int) (*[]models.GEHistorySchema, error) {
+	var ret []models.GEHistorySchema
+
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL("/my/grandexchange/history").SetResultStruct(&ret)
+
+	if code != "" {
+		req.SetParam("code", code)
+	}
+
+	if id != "" {
+		req.SetParam("id", id)
+	}
+
+	if page != 0 {
+		req.SetParam("page", strconv.Itoa(page))
+	}
+
+	if size != 0 {
+		req.SetParam("size", strconv.Itoa(size))
+	}
+
+	_, err := req.Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
 /*
 	=== Character ===
 */
