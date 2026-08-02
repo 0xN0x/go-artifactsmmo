@@ -19,7 +19,7 @@ type GETransaction struct {
 
 type GEBuyItem struct {
 	Id       string `json:"id"`
-	Quantity int    `json:"quantity"`
+	Quantity int    `json:"quantity,omitempty"`
 }
 
 type GESellItem struct {
