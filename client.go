@@ -49,7 +49,7 @@ func (c *ArtifactsMMO) GetCharacterInfo(name string) (*models.Character, error) 
 }
 
 /*
-	=== Character ===
+	=== Account ===
 */
 
 // Retrieve the details of all the characters.
@@ -63,6 +63,10 @@ func (c *ArtifactsMMO) GetMyCharactersInfo() (*[]models.Character, error) {
 
 	return &ret, nil
 }
+
+/*
+	=== Character ===
+*/
 
 // Start a fight against a monster on the character's map.
 func (c *ArtifactsMMO) Fight() (*models.CharacterFight, error) {
@@ -577,6 +581,75 @@ func (c *ArtifactsMMO) DeleteItem(code string, quantity int) (*models.ItemRepons
 	return &ret, nil
 }
 
+func (c *ArtifactsMMO) Rest() (*models.Rest, error) {
+	var ret models.Rest
+
+	_, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/rest", c.Config.GetUsername())).SetResultStruct(&ret).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) UseItem(code string, quantity int) (*models.UseItem, error) {
+	var ret models.UseItem
+
+	body := models.SimpleItem{Code: code, Quantity: quantity}
+	_, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/use", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) NPCBuyItem(code string, quantity int) (*models.NPCTransactionResponse, error) {
+	var ret models.NPCTransactionResponse
+
+	body := models.SimpleItem{Code: code, Quantity: quantity}
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/npc/buy", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 404:
+		return nil, models.ErrItemNotFound
+	case 441:
+		return nil, models.ErrItemCannotBePurchased
+	case 492:
+		return nil, models.ErrInsufficientGold
+	case 598:
+		return nil, models.ErrNPCNotFoundOnThisMap
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) NPCSellItem(code string, quantity int) (*models.NPCTransactionResponse, error) {
+	var ret models.NPCTransactionResponse
+
+	body := models.SimpleItem{Code: code, Quantity: quantity}
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/npc/sell", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 404:
+		return nil, models.ErrItemNotFound
+	case 442:
+		return nil, models.ErrItemCannotBeSold
+	case 492:
+		return nil, models.ErrInsufficientGold
+	case 598:
+		return nil, models.ErrNPCNotFoundOnThisMap
+	}
+
+	return &ret, nil
+}
+
 // Retrieve the details of the achievements
 func (c *ArtifactsMMO) GetAchievements(ach_type models.AchievementType, page int, size int) (*[]models.BaseAchievement, error) {
 	var ret []models.BaseAchievement
@@ -954,75 +1027,6 @@ func (c *ArtifactsMMO) GetTaskReward(code string) (*models.TaskRewardFull, error
 
 	if res.StatusCode == 404 {
 		return nil, models.ErrRewardNotFound
-	}
-
-	return &ret, nil
-}
-
-func (c *ArtifactsMMO) Rest() (*models.Rest, error) {
-	var ret models.Rest
-
-	_, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/rest", c.Config.GetUsername())).SetResultStruct(&ret).Run()
-	if err != nil {
-		return nil, err
-	}
-
-	return &ret, nil
-}
-
-func (c *ArtifactsMMO) UseItem(code string, quantity int) (*models.UseItem, error) {
-	var ret models.UseItem
-
-	body := models.SimpleItem{Code: code, Quantity: quantity}
-	_, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/use", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
-	if err != nil {
-		return nil, err
-	}
-
-	return &ret, nil
-}
-
-func (c *ArtifactsMMO) NPCBuyItem(code string, quantity int) (*models.NPCTransactionResponse, error) {
-	var ret models.NPCTransactionResponse
-
-	body := models.SimpleItem{Code: code, Quantity: quantity}
-	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/npc/buy", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
-	if err != nil {
-		return nil, err
-	}
-
-	switch res.StatusCode {
-	case 404:
-		return nil, models.ErrItemNotFound
-	case 441:
-		return nil, models.ErrItemCannotBePurchased
-	case 492:
-		return nil, models.ErrInsufficientGold
-	case 598:
-		return nil, models.ErrNPCNotFoundOnThisMap
-	}
-
-	return &ret, nil
-}
-
-func (c *ArtifactsMMO) NPCSellItem(code string, quantity int) (*models.NPCTransactionResponse, error) {
-	var ret models.NPCTransactionResponse
-
-	body := models.SimpleItem{Code: code, Quantity: quantity}
-	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/npc/sell", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
-	if err != nil {
-		return nil, err
-	}
-
-	switch res.StatusCode {
-	case 404:
-		return nil, models.ErrItemNotFound
-	case 442:
-		return nil, models.ErrItemCannotBeSold
-	case 492:
-		return nil, models.ErrInsufficientGold
-	case 598:
-		return nil, models.ErrNPCNotFoundOnThisMap
 	}
 
 	return &ret, nil
