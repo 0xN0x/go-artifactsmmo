@@ -497,6 +497,74 @@ func (c *ArtifactsMMO) CancelGE(id string) (*models.GETransactionResponse, error
 	return &ret, nil
 }
 
+func (c *ArtifactsMMO) CreateBuyGE(code string, quantity int, price int) (*models.GETransactionResponse, error) {
+	var ret models.GETransactionResponse
+
+	body := models.GESellItem{Code: code, Quantity: quantity, Price: price}
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/grandexchange/create_buy_order", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 404:
+		return nil, models.ErrItemNotFound
+	case 422:
+		return nil, models.ErrInvalidPayload
+	case 433:
+		return nil, models.ErrTransactionTooMany
+	case 437:
+		return nil, models.ErrItemCannotBeSold
+	case 486:
+		return nil, models.ErrActionInProgress
+	case 492:
+		return nil, models.ErrInsufficientGold
+	case 498:
+		return nil, models.ErrCharacterNotFound
+	case 499:
+		return nil, models.ErrCharacterInCooldown
+	case 598:
+		return nil, models.ErrGENotFound
+	}
+
+	return &ret, nil
+}
+
+func (c *ArtifactsMMO) FillGE(id string, quantity int) (*models.GETransactionResponse, error) {
+	var ret models.GETransactionResponse
+
+	body := models.GEBuyItem{Id: id, Quantity: quantity}
+	res, err := api.NewRequest(c.Config).SetMethod("POST").SetURL(fmt.Sprintf("/my/%s/action/grandexchange/fill", c.Config.GetUsername())).SetResultStruct(&ret).SetBody(body).Run()
+	if err != nil {
+		return nil, err
+	}
+
+	switch res.StatusCode {
+	case 404:
+		return nil, models.ErrGEOrderNotFound
+	case 422:
+		return nil, models.ErrInvalidPayload
+	case 434:
+		return nil, models.ErrTooManyItems
+	case 435:
+		return nil, models.ErrTransactionSelf
+	case 436:
+		return nil, models.ErrTransactionOther
+	case 478:
+		return nil, models.ErrMissingItem
+	case 486:
+		return nil, models.ErrActionInProgress
+	case 498:
+		return nil, models.ErrCharacterNotFound
+	case 499:
+		return nil, models.ErrCharacterInCooldown
+	case 598:
+		return nil, models.ErrGENotFound
+	}
+
+	return &ret, nil
+}
+
 func (c *ArtifactsMMO) DeleteItem(code string, quantity int) (*models.ItemReponse, error) {
 	var ret models.ItemReponse
 
