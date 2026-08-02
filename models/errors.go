@@ -12,6 +12,7 @@ const (
 
 	ErrMapNotFound         ArtifactError = "map not found"
 	ErrItemNotFound        ArtifactError = "item not found"
+	ErrItemHistoryNotFound ArtifactError = "item history not found"
 	ErrCharacterNotFound   ArtifactError = "character not found"
 	ErrRessourceNotFound   ArtifactError = "ressource not found on this map"
 	ErrCraftNotFound       ArtifactError = "craft not found"

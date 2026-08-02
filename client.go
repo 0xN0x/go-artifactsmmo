@@ -1144,7 +1144,7 @@ func (c *ArtifactsMMO) GetGEOrder(id string) (*models.GEOrderSchema, error) {
 	}
 
 	if res.StatusCode == 404 {
-		return nil, models.ErrItemNotFound
+		return nil, models.ErrGEOrderNotFound
 	}
 
 	return &ret, nil
@@ -1173,7 +1173,7 @@ func (c *ArtifactsMMO) GetGEHistory(code string, account string, page int, size 
 	}
 
 	if res.StatusCode == 404 {
-		return nil, models.ErrItemNotFound
+		return nil, models.ErrItemHistoryNotFound
 	}
 
 	return &ret, nil
