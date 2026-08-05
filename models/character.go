@@ -15,69 +15,65 @@ const (
 	CharacterSkinGoblin1    CharacterSkin = "goblin1"
 )
 
-type LayerMap string
-
-const (
-	LayerInterior    LayerMap = "interior"
-	LayerOverworld   LayerMap = "overworld"
-	LayerUnderground LayerMap = "underground"
-)
-
 type Character struct {
 	// Main
-	Name           string        `json:"name"`
-	Account        string        `json:"account"`
-	Skin           CharacterSkin `json:"skin"`
-	Level          int           `json:"level"`
-	Xp             int           `json:"xp"`
-	MaxXp          int           `json:"max_xp"`
-	Gold           int           `json:"gold"`
-	Speed          int           `json:"speed"`
-	Hp             int           `json:"hp"`
-	MaxHp          int           `json:"max_hp"`
-	Haste          int           `json:"haste"`
-	CriticalStrike int           `json:"critical_strike"`
-	Wisdom         int           `json:"wisdom"`
-	Prospecting    int           `json:"prospecting"`
-
-	// Position
-	X     int      `json:"x"`
-	Y     int      `json:"y"`
-	Layer LayerMap `json:"layer"`
-	MapId int      `json:"map_id"`
+	Name    string        `json:"name"`
+	Account string        `json:"account"`
+	Skin    CharacterSkin `json:"skin"`
+	Level   int           `json:"level"`
+	Xp      int           `json:"xp"`
+	MaxXp   int           `json:"max_xp"`
+	Gold    int           `json:"gold"`
+	Speed   int           `json:"speed"`
 
 	// Mining
 	MiningLevel int `json:"mining_level"`
 	MiningXp    int `json:"mining_xp"`
 	MiningMaxXp int `json:"mining_max_xp"`
+
 	// Woodcutting
-	WoodCuttingLevel int `json:"wood_cutting_level"`
-	WoodCuttingXp    int `json:"wood_cutting_xp"`
-	WoodCuttingMaxXp int `json:"wood_cutting_max_xp"`
+	WoodCuttingLevel int `json:"woodcutting_level"`
+	WoodCuttingXp    int `json:"woodcutting_xp"`
+	WoodCuttingMaxXp int `json:"woodcutting_max_xp"`
+
 	// Fishing
 	FishingLevel int `json:"fishing_level"`
 	FishingXp    int `json:"fishing_xp"`
 	FishingMaxXp int `json:"fishing_max_xp"`
+
 	// Weaponcrafting
 	WeaponCraftingLevel int `json:"weaponcrafting_level"`
 	WeaponCraftingXp    int `json:"weaponcrafting_xp"`
 	WeaponCraftingMaxXp int `json:"weaponcrafting_max_xp"`
+
 	// Gearcrafting
 	GearCraftingLevel int `json:"gearcrafting_level"`
 	GearCraftingXp    int `json:"gearcrafting_xp"`
 	GearCraftingMaxXp int `json:"gearcrafting_max_xp"`
+
 	// Jewelry
 	JewelryCraftingLevel int `json:"jewelrycrafting_level"`
 	JewelryCraftXp       int `json:"jewelrycrafting_xp"`
 	JewelryCraftMaxXp    int `json:"jewelrycrafting_max_xp"`
+
 	// Cooking
 	CookingLevel int `json:"cooking_level"`
 	CookingXp    int `json:"cooking_xp"`
 	CookingMaxXp int `json:"cooking_max_xp"`
+
 	// Alchemy
 	AlchemyLevel int `json:"alchemy_level"`
 	AlchemyXp    int `json:"alchemy_xp"`
 	AlchemyMaxXp int `json:"alchemy_max_xp"`
+
+	Hp             int `json:"hp"`
+	MaxHp          int `json:"max_hp"`
+	Haste          int `json:"haste"`
+	CriticalStrike int `json:"critical_strike"`
+	Wisdom         int `json:"wisdom"`
+	Prospecting    int `json:"prospecting"`
+	Initiative     int `json:"initiative"`
+	Threat         int `json:"threat"`
 
 	// Attacks
 	AttackFire  int `json:"attack_fire"`
@@ -97,6 +93,14 @@ type Character struct {
 	ResEarth int `json:"res_earth"`
 	ResWater int `json:"res_water"`
 	ResAir   int `json:"res_air"`
+
+	Effects []SimpleEffect `json:"effects"`
+
+	// Position
+	X     int      `json:"x"`
+	Y     int      `json:"y"`
+	Layer LayerMap `json:"layer"`
+	MapId string   `json:"map_id"`
 
 	// Cooldowns
 	Cooldown           int    `json:"cooldown"`
