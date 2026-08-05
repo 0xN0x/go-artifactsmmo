@@ -12,6 +12,14 @@ const (
 	MapNPC           MapContentType = "npc"
 )
 
+type LayerMap string
+
+const (
+	LayerInterior    LayerMap = "interior"
+	LayerOverworld   LayerMap = "overworld"
+	LayerUnderground LayerMap = "underground"
+)
+
 type Destination struct {
 	Name    string     `json:"name"`
 	Skin    string     `json:"skin"`

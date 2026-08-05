@@ -951,7 +951,7 @@ func (c *ArtifactsMMO) NPCSellItem(code string, quantity int) (*models.NPCTransa
 func (c *ArtifactsMMO) GetAllNPCs(npc_type models.NPCType, page int, size int) (*[]models.NPC, error) {
 	var ret []models.NPC
 
-	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/npcs")).SetResultStruct(&ret)
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/npcs/details")).SetResultStruct(&ret)
 
 	if npc_type != "" {
 		req.SetParam("type", string(npc_type))
@@ -976,7 +976,7 @@ func (c *ArtifactsMMO) GetAllNPCs(npc_type models.NPCType, page int, size int) (
 func (c *ArtifactsMMO) GetNPC(code string) (*models.NPC, error) {
 	var ret models.NPC
 
-	res, err := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/npcs/%s", code)).SetResultStruct(&ret).Run()
+	res, err := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/npcs/details/%s", code)).SetResultStruct(&ret).Run()
 	if err != nil {
 		return nil, err
 	}
@@ -991,7 +991,7 @@ func (c *ArtifactsMMO) GetNPC(code string) (*models.NPC, error) {
 func (c *ArtifactsMMO) GetNPCItems(code string, page int, size int) (*[]models.NPCItem, error) {
 	var ret []models.NPCItem
 
-	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/npcs/%s/items", code)).SetResultStruct(&ret)
+	req := api.NewRequest(c.Config).SetMethod("GET").SetURL(fmt.Sprintf("/npcs/items/%s", code)).SetResultStruct(&ret)
 
 	if page != 0 {
 		req.SetParam("page", strconv.Itoa(page))

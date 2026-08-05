@@ -3,68 +3,77 @@ package models
 type CharacterSkin string
 
 const (
-	CharacterSkinMen1   CharacterSkin = "men1"
-	CharacterSkinMen2   CharacterSkin = "men2"
-	CharacterSkinMen3   CharacterSkin = "men3"
-	CharacterSkinWomen1 CharacterSkin = "women1"
-	CharacterSkinWomen2 CharacterSkin = "women2"
-	CharacterSkinWomen3 CharacterSkin = "women3"
+	CharacterSkinMen1       CharacterSkin = "men1"
+	CharacterSkinMen2       CharacterSkin = "men2"
+	CharacterSkinMen3       CharacterSkin = "men3"
+	CharacterSkinWomen1     CharacterSkin = "women1"
+	CharacterSkinWomen2     CharacterSkin = "women2"
+	CharacterSkinWomen3     CharacterSkin = "women3"
+	CharacterSkinCorrupted1 CharacterSkin = "corrupted1"
+	CharacterSkinZombie1    CharacterSkin = "zombie1"
+	CharacterSkinMarauder1  CharacterSkin = "marauder1"
+	CharacterSkinGoblin1    CharacterSkin = "goblin1"
 )
 
 type Character struct {
 	// Main
-	Name           string        `json:"name"`
-	Account        string        `json:"account"`
-	Skin           CharacterSkin `json:"skin"`
-	Level          int           `json:"level"`
-	Xp             int           `json:"xp"`
-	MaxXp          int           `json:"max_xp"`
-	Gold           int           `json:"gold"`
-	Hp             int           `json:"hp"`
-	MaxHp          int           `json:"max_hp"`
-	Haste          int           `json:"haste"`
-	CriticalStrike int           `json:"critical_strike"`
-	Stamina        int           `json:"stamina"`
-	Wisdom         int           `json:"wisdom"`
-	Prospecting    int           `json:"prospecting"`
-	// Speed          int           `json:"speed"` not added yet, but on roadmap
-
-	// Position
-	X int `json:"x"`
-	Y int `json:"y"`
+	Name    string        `json:"name"`
+	Account string        `json:"account"`
+	Skin    CharacterSkin `json:"skin"`
+	Level   int           `json:"level"`
+	Xp      int           `json:"xp"`
+	MaxXp   int           `json:"max_xp"`
+	Gold    int           `json:"gold"`
+	Speed   int           `json:"speed"`
 
 	// Mining
 	MiningLevel int `json:"mining_level"`
 	MiningXp    int `json:"mining_xp"`
 	MiningMaxXp int `json:"mining_max_xp"`
+
 	// Woodcutting
-	WoodCuttingLevel int `json:"wood_cutting_level"`
-	WoodCuttingXp    int `json:"wood_cutting_xp"`
-	WoodCuttingMaxXp int `json:"wood_cutting_max_xp"`
+	WoodCuttingLevel int `json:"woodcutting_level"`
+	WoodCuttingXp    int `json:"woodcutting_xp"`
+	WoodCuttingMaxXp int `json:"woodcutting_max_xp"`
+
 	// Fishing
 	FishingLevel int `json:"fishing_level"`
 	FishingXp    int `json:"fishing_xp"`
 	FishingMaxXp int `json:"fishing_max_xp"`
+
 	// Weaponcrafting
 	WeaponCraftingLevel int `json:"weaponcrafting_level"`
 	WeaponCraftingXp    int `json:"weaponcrafting_xp"`
 	WeaponCraftingMaxXp int `json:"weaponcrafting_max_xp"`
+
 	// Gearcrafting
 	GearCraftingLevel int `json:"gearcrafting_level"`
 	GearCraftingXp    int `json:"gearcrafting_xp"`
 	GearCraftingMaxXp int `json:"gearcrafting_max_xp"`
+
 	// Jewelry
 	JewelryCraftingLevel int `json:"jewelrycrafting_level"`
 	JewelryCraftXp       int `json:"jewelrycrafting_xp"`
 	JewelryCraftMaxXp    int `json:"jewelrycrafting_max_xp"`
+
 	// Cooking
 	CookingLevel int `json:"cooking_level"`
 	CookingXp    int `json:"cooking_xp"`
 	CookingMaxXp int `json:"cooking_max_xp"`
+
 	// Alchemy
 	AlchemyLevel int `json:"alchemy_level"`
 	AlchemyXp    int `json:"alchemy_xp"`
 	AlchemyMaxXp int `json:"alchemy_max_xp"`
+
+	Hp             int `json:"hp"`
+	MaxHp          int `json:"max_hp"`
+	Haste          int `json:"haste"`
+	CriticalStrike int `json:"critical_strike"`
+	Wisdom         int `json:"wisdom"`
+	Prospecting    int `json:"prospecting"`
+	Initiative     int `json:"initiative"`
+	Threat         int `json:"threat"`
 
 	// Attacks
 	AttackFire  int `json:"attack_fire"`
@@ -85,6 +94,14 @@ type Character struct {
 	ResWater int `json:"res_water"`
 	ResAir   int `json:"res_air"`
 
+	Effects []SimpleEffect `json:"effects"`
+
+	// Position
+	X     int      `json:"x"`
+	Y     int      `json:"y"`
+	Layer LayerMap `json:"layer"`
+	MapId string   `json:"map_id"`
+
 	// Cooldowns
 	Cooldown           int    `json:"cooldown"`
 	CooldownExpiration string `json:"cooldown_expiration"`
@@ -104,9 +121,9 @@ type Character struct {
 	Artifact2Slot        string `json:"artifact2_slot"`
 	Artifact3Slot        string `json:"artifact3_slot"`
 	Utility1Slot         string `json:"utility1_slot"`
-	Utility1SlotQuantity string `json:"utility1_slot_quantity"`
+	Utility1SlotQuantity int    `json:"utility1_slot_quantity"`
 	Utility2Slot         string `json:"utility2_slot"`
-	Utility2SlotQuantity string `json:"utility2_slot_quantity"`
+	Utility2SlotQuantity int    `json:"utility2_slot_quantity"`
 	BagSlot              string `json:"bag_slot"`
 
 	// Task
@@ -129,20 +146,22 @@ type InventorySlots struct {
 type Slot string
 
 const (
-	Weapon      Slot = "weapon"
-	Shield      Slot = "shield"
-	Helmet      Slot = "helmet"
-	BodyArmor   Slot = "body_armor"
-	LegArmor    Slot = "leg_armor"
-	Boots       Slot = "boots"
-	Ring1       Slot = "ring1"
-	Ring2       Slot = "ring2"
-	Amulet      Slot = "amulet"
-	Artifact1   Slot = "artifact1"
-	Artifact2   Slot = "artifact2"
-	Artifact3   Slot = "artifact3"
-	Consumable1 Slot = "consumable1"
-	Consumable2 Slot = "consumable2"
+	Weapon    Slot = "weapon"
+	Shield    Slot = "shield"
+	Helmet    Slot = "helmet"
+	BodyArmor Slot = "body_armor"
+	LegArmor  Slot = "leg_armor"
+	Boots     Slot = "boots"
+	Ring1     Slot = "ring1"
+	Ring2     Slot = "ring2"
+	Amulet    Slot = "amulet"
+	Artifact1 Slot = "artifact1"
+	Artifact2 Slot = "artifact2"
+	Artifact3 Slot = "artifact3"
+	Utility1  Slot = "utility1"
+	Utility2  Slot = "utility2"
+	Bag       Slot = "bag"
+	Rune      Slot = "rune"
 )
 
 type ItemInventory struct {
